@@ -1,7 +1,12 @@
 package br.ifg.vertex.arvore;
 
 import br.ifg.vertex.modelo.Localidade;
+import br.ifg.vertex.modelo.TipoLocalidade;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.Queue;
 
 /**
  * Árvore binária de busca (ABB) de localidades, ordenada pelo ID.
@@ -16,8 +21,9 @@ import java.util.Optional;
  *       {@code SistemaCidades} (etapa 5).</li>
  * </ul>
  *
- * <p>Nesta etapa: inserir, pesquisar, menor/maior, contagens, altura, nível e vazia.
- * Remoção, atualização e percursos entram na etapa 3.</p>
+ * <p>Operações: inserir, pesquisar, remover (3 casos), atualizar, menor/maior,
+ * contagens, altura, nível, vazia e os quatro percursos. Balanceamento e vetor
+ * por níveis entram na etapa 4.</p>
  */
 public class ArvoreBinariaBusca {
 
@@ -66,14 +72,20 @@ public class ArvoreBinariaBusca {
 
     /** Procura uma localidade pelo ID. Vazio se não existir. */
     public Optional<Localidade> pesquisar(int id) {
+        NoArvore no = localizar(id);
+        return no == null ? Optional.empty() : Optional.of(no.getLocalidade());
+    }
+
+    /** Desce pela árvore até achar o nó com esse ID; {@code null} se não existir. */
+    private NoArvore localizar(int id) {
         NoArvore atual = raiz;
         while (atual != null) {
             if (id == atual.getId()) {
-                return Optional.of(atual.getLocalidade());
+                return atual;
             }
             atual = (id < atual.getId()) ? atual.getEsquerdo() : atual.getDireito();
         }
-        return Optional.empty();
+        return null;
     }
 
     /** Atalho: existe uma localidade com esse ID? */
@@ -209,5 +221,179 @@ public class ArvoreBinariaBusca {
             nivel++;
         }
         return -1;
+    }
+
+    // ------------------------------------------------------------------
+    // Atualização
+    // ------------------------------------------------------------------
+
+    /**
+     * Atualiza nome, tipo e população da localidade com esse ID. O ID e a posição
+     * do nó na árvore não mudam (por isso a árvore não precisa ser reorganizada).
+     *
+     * <p>Os novos valores são validados <b>antes</b> de qualquer alteração: se algum
+     * for inválido, nada é modificado.</p>
+     *
+     * @return {@code true} se atualizou; {@code false} se o ID não existe
+     * @throws IllegalArgumentException se algum dado novo for inválido
+     */
+    public boolean atualizar(int id, String novoNome, TipoLocalidade novoTipo, int novaPopulacao) {
+        NoArvore no = localizar(id);
+        if (no == null) {
+            return false;
+        }
+        // Criar uma Localidade temporária só para reaproveitar as validações do construtor.
+        Localidade validada = new Localidade(id, novoNome, novoTipo, novaPopulacao);
+
+        // Altera o objeto que já está no nó (outros pontos do sistema enxergam a mudança).
+        Localidade atual = no.getLocalidade();
+        atual.setNome(validada.getNome());
+        atual.setTipo(validada.getTipo());
+        atual.setPopulacao(validada.getPopulacao());
+        return true;
+    }
+
+    // ------------------------------------------------------------------
+    // Remoção
+    // ------------------------------------------------------------------
+
+    /**
+     * Remove a localidade com esse ID, mantendo a árvore uma ABB válida.
+     *
+     * @return {@code true} se removeu; {@code false} se o ID não existe
+     */
+    public boolean remover(int id) {
+        if (!contem(id)) {
+            return false;
+        }
+        raiz = remover(raiz, id);
+        return true;
+    }
+
+    /**
+     * Remove o ID da subárvore que começa em {@code no} e devolve a nova raiz dessa
+     * subárvore (o pai usa o retorno para se religar). Só é chamada quando o ID
+     * existe, então {@code no} nunca é nulo.
+     */
+    private NoArvore remover(NoArvore no, int id) {
+        if (id < no.getId()) {
+            no.setEsquerdo(remover(no.getEsquerdo(), id));
+            return no;
+        }
+        if (id > no.getId()) {
+            no.setDireito(remover(no.getDireito(), id));
+            return no;
+        }
+
+        // Achamos o nó a remover. Três casos:
+
+        // Caso 1: folha. O pai passa a apontar para nada.
+        if (no.ehFolha()) {
+            return null;
+        }
+        // Caso 2: um só filho. O pai passa a apontar para esse filho.
+        if (no.getDireito() == null) {
+            return no.getEsquerdo();
+        }
+        if (no.getEsquerdo() == null) {
+            return no.getDireito();
+        }
+        // Caso 3: dois filhos. Copia para este nó a localidade do sucessor em ordem
+        // (o menor ID da subárvore direita) e remove o sucessor lá de baixo, onde
+        // ele cai no caso 1 ou 2 (um sucessor nunca tem filho esquerdo).
+        NoArvore sucessor = menorNo(no.getDireito());
+        no.setLocalidade(sucessor.getLocalidade());
+        no.setDireito(remover(no.getDireito(), sucessor.getId()));
+        return no;
+    }
+
+    /** Nó mais à esquerda da subárvore que começa em {@code no}. */
+    private NoArvore menorNo(NoArvore no) {
+        while (no.getEsquerdo() != null) {
+            no = no.getEsquerdo();
+        }
+        return no;
+    }
+
+    // ------------------------------------------------------------------
+    // Percursos
+    // ------------------------------------------------------------------
+
+    /** Pré-ordem: o nó, depois a subárvore esquerda, depois a direita. */
+    public List<Localidade> preOrdem() {
+        List<Localidade> resultado = new ArrayList<>();
+        preOrdem(raiz, resultado);
+        return resultado;
+    }
+
+    private void preOrdem(NoArvore no, List<Localidade> resultado) {
+        if (no == null) {
+            return;
+        }
+        resultado.add(no.getLocalidade());
+        preOrdem(no.getEsquerdo(), resultado);
+        preOrdem(no.getDireito(), resultado);
+    }
+
+    /**
+     * Em ordem: subárvore esquerda, o nó, subárvore direita.
+     *
+     * <p>Numa ABB sai em ordem crescente de ID: tudo à esquerda é menor que o nó e
+     * tudo à direita é maior, então cada nó só aparece depois de todos os menores
+     * e antes de todos os maiores (vale em cada subárvore, por indução).</p>
+     */
+    public List<Localidade> emOrdem() {
+        List<Localidade> resultado = new ArrayList<>();
+        emOrdem(raiz, resultado);
+        return resultado;
+    }
+
+    private void emOrdem(NoArvore no, List<Localidade> resultado) {
+        if (no == null) {
+            return;
+        }
+        emOrdem(no.getEsquerdo(), resultado);
+        resultado.add(no.getLocalidade());
+        emOrdem(no.getDireito(), resultado);
+    }
+
+    /** Pós-ordem: subárvore esquerda, subárvore direita, depois o nó. */
+    public List<Localidade> posOrdem() {
+        List<Localidade> resultado = new ArrayList<>();
+        posOrdem(raiz, resultado);
+        return resultado;
+    }
+
+    private void posOrdem(NoArvore no, List<Localidade> resultado) {
+        if (no == null) {
+            return;
+        }
+        posOrdem(no.getEsquerdo(), resultado);
+        posOrdem(no.getDireito(), resultado);
+        resultado.add(no.getLocalidade());
+    }
+
+    /**
+     * Por níveis (largura): nível 0, depois 1, depois 2... da esquerda para a direita.
+     * Usa uma fila: tira o da frente, guarda no resultado e põe os filhos no fim.
+     */
+    public List<Localidade> porNiveis() {
+        List<Localidade> resultado = new ArrayList<>();
+        if (raiz == null) {
+            return resultado;
+        }
+        Queue<NoArvore> fila = new ArrayDeque<>();
+        fila.add(raiz);
+        while (!fila.isEmpty()) {
+            NoArvore no = fila.remove();
+            resultado.add(no.getLocalidade());
+            if (no.getEsquerdo() != null) {
+                fila.add(no.getEsquerdo());
+            }
+            if (no.getDireito() != null) {
+                fila.add(no.getDireito());
+            }
+        }
+        return resultado;
     }
 }
