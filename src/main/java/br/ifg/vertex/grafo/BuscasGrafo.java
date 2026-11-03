@@ -1,5 +1,6 @@
 package br.ifg.vertex.grafo;
 
+import br.ifg.vertex.modelo.Aresta;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Deque;
@@ -79,6 +80,24 @@ public final class BuscasGrafo {
             }
         }
         return montar(grafo, origem, ordem, pai, profundidade);
+    }
+
+    /**
+     * Caminho com MENOS ARESTAS entre duas localidades (é o que a BFS garante). Ele ignora
+     * km e minutos: por isso pode ser mais longo ou mais lento que o do Dijkstra.
+     */
+    public static ResultadoCaminho menosArestas(Grafo grafo, int origem, int destino) {
+        exigirOrigem(grafo, origem);
+        exigirOrigem(grafo, destino);
+        List<Integer> vertices = emLargura(grafo, origem).caminhoAte(destino);
+        if (vertices.isEmpty()) {
+            return ResultadoCaminho.inexistente(origem, destino);
+        }
+        List<Aresta> trechos = new ArrayList<>();
+        for (int i = 0; i + 1 < vertices.size(); i++) {
+            trechos.add(grafo.obterAresta(vertices.get(i), vertices.get(i + 1)).orElseThrow());
+        }
+        return ResultadoCaminho.deTrechos(origem, destino, trechos);
     }
 
     private static void exigirOrigem(Grafo grafo, int origem) {
