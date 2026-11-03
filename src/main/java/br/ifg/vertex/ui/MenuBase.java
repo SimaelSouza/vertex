@@ -48,4 +48,11 @@ abstract class MenuBase {
     protected int lerId(String pergunta) {
         return entrada.lerInteiro(pergunta, 1, Integer.MAX_VALUE);
     }
+
+    /** Lê um ID e já confere na árvore se a localidade existe (se não, lança erro de regra). */
+    protected int lerIdExistente(String pergunta) {
+        int id = lerId(pergunta);
+        sistema.exigirLocalidade(id);
+        return id;
+    }
 }

@@ -4,7 +4,7 @@ import br.ifg.vertex.servico.RegraNegocioException;
 import br.ifg.vertex.servico.SistemaCidades;
 
 /**
- * Menu principal (as 15 opções do slide 21). As opções 1 a 11 e 13 já funcionam; as demais
+ * Menu principal (as 15 opções do slide 21). As opções 1 a 14 já funcionam; as demais
  * avisam em qual etapa do roadmap serão implementadas.
  */
 public class MenuPrincipal {
@@ -15,6 +15,8 @@ public class MenuPrincipal {
     private final MenuConexoes conexoes;
     private final MenuBuscas buscas;
     private final MenuRotas rotas;
+    private final MenuConectividade conectividade;
+    private final MenuRelatorios relatorios;
 
     public MenuPrincipal(Entrada entrada, SistemaCidades sistema) {
         this.entrada = entrada;
@@ -23,6 +25,8 @@ public class MenuPrincipal {
         this.conexoes = new MenuConexoes(entrada, sistema);
         this.buscas = new MenuBuscas(entrada, sistema);
         this.rotas = new MenuRotas(entrada, sistema);
+        this.conectividade = new MenuConectividade(entrada, sistema);
+        this.relatorios = new MenuRelatorios(entrada, sistema);
     }
 
     /** Laço principal: mostra o menu, lê a opção e executa até o usuário sair. */
@@ -87,7 +91,8 @@ public class MenuPrincipal {
             case 10 -> buscas.profundidade();
             case 11 -> rotas.menorRota();
             case 13 -> rotas.comparar();
-            case 12, 14 -> emBreve("Conectividade e relatórios", "8");
+            case 12 -> conectividade.executar();
+            case 14 -> relatorios.executar();
             case 15 -> emBreve("Testes automáticos", "9");
             default -> Console.erro("Opção inexistente.");
         }

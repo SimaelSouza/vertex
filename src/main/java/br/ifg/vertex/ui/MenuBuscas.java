@@ -54,10 +54,29 @@ class MenuBuscas extends MenuBase {
             Console.aviso("Não alcançadas a partir daqui: " + juntar(resultado.naoAlcancados()));
         }
 
+        if (!largura) {
+            mostrarCiclos(resultado);
+        }
+
         if (entrada.confirmar("Deseja ver o caminho até um destino?")) {
             int destino = lerId("ID da localidade de destino: ");
             sistema.exigirLocalidade(destino);
             mostrarCaminho(resultado, destino, largura);
+        }
+    }
+
+    /** A DFS também serve para achar ciclos: mostra os que ficam ao alcance da origem. */
+    private void mostrarCiclos(ResultadoBusca busca) {
+        List<List<Integer>> ciclos = sistema.ciclos().stream()
+                .filter(ciclo -> ciclo.stream().allMatch(busca::alcancou))
+                .toList();
+        if (ciclos.isEmpty()) {
+            Console.linha("Ciclos ao alcance da origem: nenhum (ir e voltar pela mesma via de mão dupla não conta).");
+            return;
+        }
+        Console.aviso("Há ciclos ao alcance da origem (exemplos):");
+        for (int i = 0; i < Math.min(ciclos.size(), 3); i++) {
+            Console.linha("  " + Formatacao.ciclo(ciclos.get(i)));
         }
     }
 

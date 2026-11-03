@@ -44,46 +44,20 @@ class MenuRotas extends MenuBase {
         }
 
         Console.linhaEmBranco();
-        Console.linha(String.format("%-24s %-8s %-12s %s", "Critério", "Trechos", "Distância", "Tempo"));
-        linhaDaTabela("Menos trechos (BFS)", comparacao.menosTrechos());
-        linhaDaTabela("Menor distância", comparacao.menorDistancia());
-        linhaDaTabela("Menor tempo", comparacao.menorTempo());
+        Console.linha(Formatacao.cabecalhoDeRotas());
+        Console.linha(Formatacao.linhaDeRota("Menos trechos (BFS)", comparacao.menosTrechos()));
+        Console.linha(Formatacao.linhaDeRota("Menor distância", comparacao.menorDistancia()));
+        Console.linha(Formatacao.linhaDeRota("Menor tempo", comparacao.menorTempo()));
         Console.linhaEmBranco();
-        caminho("Menos trechos (BFS)", comparacao.menosTrechos());
-        caminho("Menor distância", comparacao.menorDistancia());
-        caminho("Menor tempo", comparacao.menorTempo());
+        Console.linha("Menos trechos (BFS): " + Formatacao.caminho(sistema, comparacao.menosTrechos()));
+        Console.linha("Menor distância: " + Formatacao.caminho(sistema, comparacao.menorDistancia()));
+        Console.linha("Menor tempo: " + Formatacao.caminho(sistema, comparacao.menorTempo()));
         Console.linhaEmBranco();
-
-        switch (comparacao.caminhosDistintos()) {
-            case 1 -> Console.ok("Os três critérios escolheram o mesmo caminho neste par.");
-            case 2 -> Console.ok("Dois critérios coincidem e o outro escolheu um caminho diferente ("
-                    + quemCoincide(comparacao) + ").");
-            default -> Console.ok("Os três critérios escolheram caminhos diferentes: distância e tempo "
-                    + "não são proporcionais, e a BFS só conta trechos.");
-        }
-    }
-
-    private static String quemCoincide(ComparacaoRotas c) {
-        if (c.bfsIgualDistancia()) {
-            return "BFS = menor distância";
-        }
-        if (c.bfsIgualTempo()) {
-            return "BFS = menor tempo";
-        }
-        return "menor distância = menor tempo";
-    }
-
-    private void linhaDaTabela(String criterio, ResultadoCaminho rota) {
-        Console.linha(String.format("%-24s %-8d %-12s %d min", criterio, rota.quantidadeTrechos(),
-                Formatacao.km(rota.distanciaKm()), rota.tempoMin()));
-    }
-
-    private void caminho(String criterio, ResultadoCaminho rota) {
-        Console.linha(criterio + ": " + textoDoCaminho(rota));
+        Console.ok(Formatacao.conclusaoDaComparacao(comparacao));
     }
 
     private void mostrarRota(ResultadoCaminho rota) {
-        Console.linha("Caminho: " + textoDoCaminho(rota));
+        Console.linha("Caminho: " + Formatacao.caminho(sistema, rota));
         if (rota.quantidadeTrechos() == 0) {
             Console.aviso("A origem e o destino são a mesma localidade.");
             return;
@@ -96,17 +70,6 @@ class MenuRotas extends MenuBase {
                 + " min em " + rota.quantidadeTrechos() + " trecho(s).");
     }
 
-    private String textoDoCaminho(ResultadoCaminho rota) {
-        StringBuilder texto = new StringBuilder();
-        for (int vertice : rota.caminho()) {
-            if (texto.length() > 0) {
-                texto.append(" -> ");
-            }
-            texto.append(nome(vertice));
-        }
-        return texto.toString();
-    }
-
     private void avisarSemRota(int origem, int destino) {
         Console.aviso("Não existe rota de " + nome(origem) + " até " + nome(destino)
                 + " seguindo o sentido das vias.");
@@ -116,9 +79,4 @@ class MenuRotas extends MenuBase {
         return Formatacao.localidade(sistema, id);
     }
 
-    private int lerIdExistente(String pergunta) {
-        int id = lerId(pergunta);
-        sistema.exigirLocalidade(id);
-        return id;
-    }
 }

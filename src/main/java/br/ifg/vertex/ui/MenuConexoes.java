@@ -42,13 +42,6 @@ class MenuConexoes extends MenuBase {
         return Formatacao.localidade(sistema, id);
     }
 
-    /** Lê um ID e já confere na árvore se a localidade existe (se não, lança erro de regra). */
-    private int lerIdExistente(String pergunta) {
-        int id = lerId(pergunta);
-        sistema.exigirLocalidade(id);
-        return id;
-    }
-
     private void adicionar() {
         int origem = lerIdExistente("ID da localidade de origem: ");
         int destino = lerIdExistente("ID da localidade de destino: ");

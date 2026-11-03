@@ -377,13 +377,89 @@ class MenuPrincipalTest {
         assertTrue(tela.contains("[AVISO] Não existe rota de 50 (Luziânia) até 95 (Bairro isolado (sem vias))"));
     }
 
+    // ---------------- conectividade e relatórios ----------------
+
+    @Test
+    void conectividadeMostraComponentesERedeNaoConexa() {
+        String tela = rodar(sistemaCompleto(), "12", "3", "4", "0", "0", "s");
+
+        assertTrue(tela.contains("1) 3, 5, 10, 15, 20, 30, 40, 50, 70, 90  (10 localidade(s))"));
+        assertTrue(tela.contains("[OK] Total: 3 componente(s)."));
+        assertTrue(tela.contains("[AVISO] A rede NÃO é conexa: ela tem 3 componentes separadas"));
+    }
+
+    @Test
+    void conectividadeMostraIsoladosEAlcancabilidadeAssimetrica() {
+        String tela = rodar(sistemaCompleto(), "12", "1", "2", "90", "15", "0", "0", "s");
+
+        assertTrue(tela.contains("95 (Bairro isolado (sem vias))"));
+        assertTrue(tela.contains("90 (IFG (campus)) chega em 15 (Centro): SIM"));
+        assertTrue(tela.contains("15 (Centro) chega em 90 (IFG (campus)): NÃO"));
+        assertTrue(tela.contains("[AVISO] A alcançabilidade é assimétrica"));
+    }
+
+    @Test
+    void conectividadeDetectaCiclosEInformaQuandoNaoHa() {
+        assertTrue(rodar(sistemaCompleto(), "12", "5", "0", "0", "s").contains("3 -> 15 -> 5 -> 3"));
+        assertTrue(rodar(sistemaDeTeste(), "12", "5", "0", "0", "s").contains("[OK] Nenhum ciclo"));
+    }
+
+    @Test
+    void conectividadeComIdInexistenteMostraErro() {
+        String tela = rodar(sistemaCompleto(), "12", "2", "999", "0", "0", "s");
+        assertTrue(tela.contains("[ERRO] Não existe localidade cadastrada com o ID 999."));
+    }
+
+    @Test
+    void dfsMostraOsCiclosAoAlcanceDaOrigem() {
+        String tela = rodar(sistemaCompleto(), "10", "50", "n", "0", "s");
+        assertTrue(tela.contains("[AVISO] Há ciclos ao alcance da origem"));
+        assertTrue(tela.contains("3 -> 15 -> 5 -> 3"));
+
+        String semCiclo = rodar(sistemaComVias(), "10", "50", "n", "0", "s");
+        assertTrue(semCiclo.contains("Ciclos ao alcance da origem: nenhum"));
+    }
+
+    @Test
+    void relatoriosAbCPeloMenu() {
+        String tela = rodar(sistemaCompleto(), "14", "1", "2", "3", "0", "0", "s");
+
+        assertTrue(tela.contains("RELATÓRIO A - CADASTRO DE LOCALIDADES"));
+        assertTrue(tela.contains("RELATÓRIO B - ESTRUTURA DA ÁRVORE"));
+        assertTrue(tela.contains("RELATÓRIO C - REDE DE TRANSPORTES"));
+    }
+
+    @Test
+    void relatorioDPeloMenuPedeOsDoisIds() {
+        String tela = rodar(sistemaCompleto(), "14", "4", "20", "70", "0", "0", "s");
+        assertTrue(tela.contains("RELATÓRIO D - ROTAS"));
+        assertTrue(tela.contains("Os três critérios escolheram caminhos diferentes"));
+    }
+
+    @Test
+    void todosOsRelatoriosDeUmaVez() {
+        String tela = rodar(sistemaCompleto(), "14", "5", "20", "70", "0", "0", "s");
+
+        for (String titulo : new String[] {"RELATÓRIO A", "RELATÓRIO B", "RELATÓRIO C", "RELATÓRIO D"}) {
+            assertTrue(tela.contains(titulo), titulo);
+        }
+    }
+
+    @Test
+    void relatoriosNaoQuebramComSistemaVazio() {
+        String tela = rodar(new SistemaCidades(), "14", "1", "2", "3", "0", "0", "s");
+
+        assertTrue(tela.contains("Nenhuma localidade cadastrada."));
+        assertTrue(tela.contains("A árvore está vazia."));
+        assertTrue(tela.contains("A rede está vazia"));
+    }
+
     // ---------------- geral ----------------
 
     @Test
     void opcoesAindaNaoImplementadasAvisamEVoltamAoMenu() {
-        String tela = rodar(sistemaDeTeste(), "12", "15", "0", "s");
+        String tela = rodar(sistemaDeTeste(), "15", "0", "s");
 
-        assertTrue(tela.contains("[AVISO] A funcionalidade \"Conectividade e relatórios\" ainda não foi implementada"));
         assertTrue(tela.contains("[AVISO] A funcionalidade \"Testes automáticos\" ainda não foi implementada"));
     }
 
