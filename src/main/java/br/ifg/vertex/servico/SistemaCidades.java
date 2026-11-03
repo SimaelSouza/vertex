@@ -2,6 +2,7 @@ package br.ifg.vertex.servico;
 
 import br.ifg.vertex.arvore.ArvoreBinariaBusca;
 import br.ifg.vertex.grafo.BuscasGrafo;
+import br.ifg.vertex.grafo.Conectividade;
 import br.ifg.vertex.grafo.CriterioPeso;
 import br.ifg.vertex.grafo.Dijkstra;
 import br.ifg.vertex.grafo.Grafo;
@@ -365,5 +366,27 @@ public class SistemaCidades {
                 rotaComMenosTrechos(origem, destino),
                 menorRota(origem, destino, CriterioPeso.DISTANCIA),
                 menorRota(origem, destino, CriterioPeso.TEMPO));
+    }
+
+    /** Componentes conexas na projeção não direcionada (cada via vale nos dois sentidos). */
+    public List<List<Integer>> componentesConexas() {
+        return Conectividade.componentes(grafo);
+    }
+
+    /** A rede inteira é uma única componente (e não está vazia)? */
+    public boolean redeConexa() {
+        return Conectividade.redeConexa(grafo);
+    }
+
+    /** A origem chega ao destino seguindo o sentido das vias? (A -> B não implica B -> A.) */
+    public boolean alcanca(int origem, int destino) {
+        exigirLocalidade(origem);
+        exigirLocalidade(destino);
+        return BuscasGrafo.emLargura(grafo, origem).alcancou(destino);
+    }
+
+    /** Exemplos de ciclos com 3 ou mais localidades; vazia se a rede não tem ciclo. */
+    public List<List<Integer>> ciclos() {
+        return Conectividade.ciclos(grafo);
     }
 }
