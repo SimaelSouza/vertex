@@ -457,10 +457,44 @@ class MenuPrincipalTest {
     // ---------------- geral ----------------
 
     @Test
-    void opcoesAindaNaoImplementadasAvisamEVoltamAoMenu() {
-        String tela = rodar(sistemaDeTeste(), "15", "0", "s");
+    void autotestePeloMenuMostraOkParaCadaCasoEResumo() {
+        SistemaCidades sistema = sistemaCompleto();
+        int localidadesAntes = sistema.listarLocalidades().size();
 
-        assertTrue(tela.contains("[AVISO] A funcionalidade \"Testes automáticos\" ainda não foi implementada"));
+        String tela = rodar(sistema, "15", "1", "0", "0", "s");
+
+        assertTrue(tela.contains("--- Árvore ---"));
+        assertTrue(tela.contains("--- Entrada ---"));
+        assertTrue(tela.contains("[OK] Todos os 36 testes passaram."));
+        assertFalse(tela.contains("[FALHA]"));
+        assertTrue(tela.contains("Consistência dos dados cadastrados agora: OK"));
+        assertEquals(localidadesAntes, sistema.listarLocalidades().size()); // os dados do usuário não mudam
+    }
+
+    @Test
+    void recarregarDadosDeExemploRestauraAsLocalidadesEConexoes() {
+        SistemaCidades sistema = sistemaCompleto();
+        sistema.removerLocalidade(50);
+        sistema.cadastrarLocalidade(777, "Extra", TipoLocalidade.BAIRRO, 1);
+
+        String tela = rodar(sistema, "15", "2", "s", "0", "0", "s");
+
+        assertTrue(tela.contains("[OK] 13 localidades e 29 conexões de exemplo carregadas."));
+        assertTrue(sistema.getArvore().contem(50));
+        assertFalse(sistema.getArvore().contem(777));
+        assertEquals(29, sistema.getGrafo().quantidadeArestas());
+        assertTrue(sistema.estaConsistente());
+    }
+
+    @Test
+    void recusarARecargaNaoMudaNada() {
+        SistemaCidades sistema = sistemaCompleto();
+        sistema.cadastrarLocalidade(777, "Extra", TipoLocalidade.BAIRRO, 1);
+
+        String tela = rodar(sistema, "15", "2", "n", "0", "0", "s");
+
+        assertTrue(tela.contains("[AVISO] Operação cancelada. Nada foi alterado."));
+        assertTrue(sistema.getArvore().contem(777));
     }
 
     @Test

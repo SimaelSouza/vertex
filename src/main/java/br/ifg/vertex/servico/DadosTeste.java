@@ -1,5 +1,6 @@
 package br.ifg.vertex.servico;
 
+import br.ifg.vertex.modelo.Localidade;
 import br.ifg.vertex.modelo.TipoLocalidade;
 
 /**
@@ -44,6 +45,14 @@ public final class DadosTeste {
     public static void carregarTudo(SistemaCidades sistema) {
         carregar(sistema);
         carregarConexoes(sistema);
+    }
+
+    /** Apaga tudo o que está cadastrado e carrega de novo os dados de teste (reinicia a demonstração). */
+    public static void recarregar(SistemaCidades sistema) {
+        for (Localidade localidade : sistema.listarLocalidades()) {
+            sistema.removerLocalidade(localidade.getId());
+        }
+        carregarTudo(sistema);
     }
 
     /**

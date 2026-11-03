@@ -4,8 +4,7 @@ import br.ifg.vertex.servico.RegraNegocioException;
 import br.ifg.vertex.servico.SistemaCidades;
 
 /**
- * Menu principal (as 15 opções do slide 21). As opções 1 a 14 já funcionam; as demais
- * avisam em qual etapa do roadmap serão implementadas.
+ * Menu principal (as 15 opções do slide 21). Todas funcionam.
  */
 public class MenuPrincipal {
 
@@ -17,6 +16,7 @@ public class MenuPrincipal {
     private final MenuRotas rotas;
     private final MenuConectividade conectividade;
     private final MenuRelatorios relatorios;
+    private final MenuTestes testes;
 
     public MenuPrincipal(Entrada entrada, SistemaCidades sistema) {
         this.entrada = entrada;
@@ -27,6 +27,7 @@ public class MenuPrincipal {
         this.rotas = new MenuRotas(entrada, sistema);
         this.conectividade = new MenuConectividade(entrada, sistema);
         this.relatorios = new MenuRelatorios(entrada, sistema);
+        this.testes = new MenuTestes(entrada, sistema);
     }
 
     /** Laço principal: mostra o menu, lê a opção e executa até o usuário sair. */
@@ -93,14 +94,9 @@ public class MenuPrincipal {
             case 13 -> rotas.comparar();
             case 12 -> conectividade.executar();
             case 14 -> relatorios.executar();
-            case 15 -> emBreve("Testes automáticos", "9");
+            case 15 -> testes.executar();
             default -> Console.erro("Opção inexistente.");
         }
         return true;
-    }
-
-    private void emBreve(String nome, String etapa) {
-        Console.aviso("A funcionalidade \"" + nome + "\" ainda não foi implementada (etapa "
-                + etapa + " do roadmap).");
     }
 }

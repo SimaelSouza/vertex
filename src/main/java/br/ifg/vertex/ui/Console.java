@@ -35,6 +35,10 @@ public final class Console {
         System.out.println("[AVISO] " + mensagem);
     }
 
+    public static void falha(String mensagem) {
+        System.out.println("[FALHA] " + mensagem);
+    }
+
     /** Escreve a pergunta de confirmação sem pular linha (a resposta é digitada em seguida). */
     public static void confirmar(String pergunta) {
         System.out.print("[CONFIRMAR] " + pergunta + " (s/n): ");
