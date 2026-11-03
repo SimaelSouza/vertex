@@ -56,6 +56,28 @@ public class Entrada {
         return linha.isEmpty() ? valorAtual : linha;
     }
 
+    /**
+     * Inteiro opcional para atualizações: Enter vazio mantém o valor atual; qualquer
+     * outra coisa precisa ser um inteiro entre {@code min} e {@code max}.
+     */
+    public int lerInteiroOuManter(String pergunta, int valorAtual, int min, int max) {
+        while (true) {
+            String linha = lerLinha(pergunta + " [Enter mantém " + valorAtual + "]: ");
+            if (linha.isEmpty()) {
+                return valorAtual;
+            }
+            try {
+                int valor = Integer.parseInt(linha);
+                if (valor >= min && valor <= max) {
+                    return valor;
+                }
+                Console.erro("Digite um número entre " + min + " e " + max + ".");
+            } catch (NumberFormatException e) {
+                Console.erro("Entrada inválida. Digite um número inteiro entre " + min + " e " + max + ".");
+            }
+        }
+    }
+
     /** Inteiro entre {@code min} e {@code max} (inclusive). */
     public int lerInteiro(String pergunta, int min, int max) {
         while (true) {

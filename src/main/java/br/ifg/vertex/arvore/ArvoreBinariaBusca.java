@@ -583,4 +583,31 @@ public class ArvoreBinariaBusca {
     public EstudoArmazenamento estudarArmazenamento() {
         return EstudoArmazenamento.de(quantidadeNos(), altura());
     }
+
+    // ------------------------------------------------------------------
+    // Representação textual
+    // ------------------------------------------------------------------
+
+    /**
+     * Desenho da árvore "deitada": a raiz fica na margem esquerda e cada nível entra
+     * 4 espaços para a direita. Em cada nó, o filho direito aparece ACIMA ({@code /--})
+     * e o esquerdo ABAIXO ({@code \--}); girando a cabeça para a esquerda, vê-se a árvore.
+     * Cada linha mostra {@code id (nome)}. Árvore vazia devolve texto vazio.
+     */
+    public String desenhoLateral() {
+        StringBuilder texto = new StringBuilder();
+        desenhar(raiz, 0, "", texto);
+        return texto.toString();
+    }
+
+    /** Percurso "direita, nó, esquerda": é o que põe o filho direito em cima. */
+    private void desenhar(NoArvore no, int nivel, String ramo, StringBuilder texto) {
+        if (no == null) {
+            return;
+        }
+        desenhar(no.getDireito(), nivel + 1, "/-- ", texto);
+        texto.append("    ".repeat(nivel)).append(ramo)
+                .append(no.getId()).append(" (").append(no.getLocalidade().getNome()).append(")\n");
+        desenhar(no.getEsquerdo(), nivel + 1, "\\-- ", texto);
+    }
 }

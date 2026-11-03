@@ -1,5 +1,7 @@
 package br.ifg.vertex.app;
 
+import br.ifg.vertex.servico.DadosTeste;
+import br.ifg.vertex.servico.SistemaCidades;
 import br.ifg.vertex.ui.Console;
 import br.ifg.vertex.ui.Entrada;
 import br.ifg.vertex.ui.EntradaEncerradaException;
@@ -17,8 +19,11 @@ public class Main {
     public static void main(String[] args) {
         Entrada entrada = new Entrada(System.in);
         try {
-            // Nas próximas etapas: criar o SistemaCidades e carregar os dados de teste aqui.
-            new MenuPrincipal(entrada).executar();
+            SistemaCidades sistema = new SistemaCidades();
+            DadosTeste.carregar(sistema);
+            Console.ok(sistema.listarLocalidades().size() + " localidades de teste carregadas.");
+
+            new MenuPrincipal(entrada, sistema).executar();
         } catch (EntradaEncerradaException e) {
             Console.linhaEmBranco();
             Console.aviso("Entrada encerrada. Até logo!");

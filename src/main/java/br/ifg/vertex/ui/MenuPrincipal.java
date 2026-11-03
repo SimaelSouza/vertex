@@ -1,15 +1,24 @@
 package br.ifg.vertex.ui;
 
+import br.ifg.vertex.servico.RegraNegocioException;
+import br.ifg.vertex.servico.SistemaCidades;
+
 /**
- * Menu principal (as 15 opções do slide 21). Nesta etapa só o esqueleto funciona:
- * cada opção avisa em qual etapa do roadmap ela será implementada.
+ * Menu principal (as 15 opções do slide 21). As opções 1 a 8 já funcionam; as demais
+ * avisam em qual etapa do roadmap serão implementadas.
  */
 public class MenuPrincipal {
 
     private final Entrada entrada;
+    private final MenuLocalidades localidades;
+    private final MenuArvore arvore;
+    private final MenuConexoes conexoes;
 
-    public MenuPrincipal(Entrada entrada) {
+    public MenuPrincipal(Entrada entrada, SistemaCidades sistema) {
         this.entrada = entrada;
+        this.localidades = new MenuLocalidades(entrada, sistema);
+        this.arvore = new MenuArvore(entrada, sistema);
+        this.conexoes = new MenuConexoes(entrada, sistema);
     }
 
     /** Laço principal: mostra o menu, lê a opção e executa até o usuário sair. */
@@ -22,6 +31,8 @@ public class MenuPrincipal {
                 continuar = tratarOpcao(opcao);
             } catch (EntradaEncerradaException e) {
                 throw e; // quem trata é o Main
+            } catch (RegraNegocioException e) {
+                Console.erro(e.getMessage()); // regra violada: mensagem pronta, volta ao menu
             } catch (RuntimeException e) {
                 // Última rede de proteção: nenhum erro inesperado derruba o programa.
                 Console.erro("Ocorreu um erro inesperado (" + e.getMessage() + "). Voltando ao menu.");
@@ -60,9 +71,14 @@ public class MenuPrincipal {
                     return false;
                 }
             }
-            case 1, 2, 3, 4 -> emBreve("Gerenciamento de localidades", "5");
-            case 5, 6, 7 -> emBreve("Operações da árvore", "2 a 4");
-            case 8 -> emBreve("Gerenciamento de conexões", "5");
+            case 1 -> localidades.cadastrar();
+            case 2 -> localidades.pesquisar();
+            case 3 -> localidades.atualizar();
+            case 4 -> localidades.remover();
+            case 5 -> arvore.visualizar();
+            case 6 -> arvore.percursos();
+            case 7 -> arvore.balancear();
+            case 8 -> conexoes.executar();
             case 9, 10 -> emBreve("Buscas BFS e DFS", "6");
             case 11, 13 -> emBreve("Rotas (Dijkstra)", "7");
             case 12, 14 -> emBreve("Conectividade e relatórios", "8");

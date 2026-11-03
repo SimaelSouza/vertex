@@ -48,6 +48,12 @@ class EntradaTest {
     }
 
     @Test
+    void inteiroOuManterDevolveOAtualComEnterVazioEValidaOResto() {
+        assertEquals(42, com("").lerInteiroOuManter("Pop", 42, 0, 1000));
+        assertEquals(7, com("x", "5000", "-1", "7").lerInteiroOuManter("Pop", 42, 0, 1000));
+    }
+
+    @Test
     void confirmarAceitaSimNaoERepeteNoInvalido() {
         assertTrue(com("talvez", "S").confirmar("ok?"));
         assertFalse(com("nao").confirmar("ok?"));
