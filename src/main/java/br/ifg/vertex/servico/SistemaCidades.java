@@ -2,8 +2,11 @@ package br.ifg.vertex.servico;
 
 import br.ifg.vertex.arvore.ArvoreBinariaBusca;
 import br.ifg.vertex.grafo.BuscasGrafo;
+import br.ifg.vertex.grafo.CriterioPeso;
+import br.ifg.vertex.grafo.Dijkstra;
 import br.ifg.vertex.grafo.Grafo;
 import br.ifg.vertex.grafo.ResultadoBusca;
+import br.ifg.vertex.grafo.ResultadoCaminho;
 import br.ifg.vertex.modelo.Aresta;
 import br.ifg.vertex.modelo.Localidade;
 import br.ifg.vertex.modelo.TipoLocalidade;
@@ -340,5 +343,27 @@ public class SistemaCidades {
     public ResultadoBusca buscaEmProfundidade(int origem) {
         exigirLocalidade(origem);
         return BuscasGrafo.emProfundidade(grafo, origem);
+    }
+
+    /** Menor rota (Dijkstra) pelo critério escolhido: distância ou tempo. */
+    public ResultadoCaminho menorRota(int origem, int destino, CriterioPeso criterio) {
+        exigirLocalidade(origem);
+        exigirLocalidade(destino);
+        return Dijkstra.menorCaminho(grafo, origem, destino, criterio);
+    }
+
+    /** Rota com menos trechos (BFS), sem olhar km nem minutos. */
+    public ResultadoCaminho rotaComMenosTrechos(int origem, int destino) {
+        exigirLocalidade(origem);
+        exigirLocalidade(destino);
+        return BuscasGrafo.menosArestas(grafo, origem, destino);
+    }
+
+    /** Roda os três critérios para o mesmo par (opção "Comparar rotas"). */
+    public ComparacaoRotas compararRotas(int origem, int destino) {
+        return new ComparacaoRotas(
+                rotaComMenosTrechos(origem, destino),
+                menorRota(origem, destino, CriterioPeso.DISTANCIA),
+                menorRota(origem, destino, CriterioPeso.TEMPO));
     }
 }
