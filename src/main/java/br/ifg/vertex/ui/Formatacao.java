@@ -1,7 +1,9 @@
 package br.ifg.vertex.ui;
 
+import br.ifg.vertex.grafo.ResultadoCaminho;
 import br.ifg.vertex.modelo.Aresta;
 import br.ifg.vertex.modelo.Localidade;
+import br.ifg.vertex.servico.ComparacaoRotas;
 import br.ifg.vertex.servico.SistemaCidades;
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
@@ -64,5 +66,62 @@ final class Formatacao {
             texto.append(localidade.getId());
         }
         return texto.toString();
+    }
+
+    /** "3, 5, 10": IDs inteiros separados por vírgula. */
+    static String idsInteiros(List<Integer> ids) {
+        StringBuilder texto = new StringBuilder();
+        for (int id : ids) {
+            if (texto.length() > 0) {
+                texto.append(", ");
+            }
+            texto.append(id);
+        }
+        return texto.toString();
+    }
+
+    /** "3 -> 15 -> 5 -> 3": um ciclo, voltando ao primeiro vértice no fim. */
+    static String ciclo(List<Integer> ciclo) {
+        StringBuilder texto = new StringBuilder();
+        for (int id : ciclo) {
+            texto.append(id).append(" -> ");
+        }
+        return texto.append(ciclo.get(0)).toString();
+    }
+
+    /** "50 (Luziânia) -> 30 (Valparaíso de Goiás)": os vértices do caminho com nome. */
+    static String caminho(SistemaCidades sistema, ResultadoCaminho rota) {
+        StringBuilder texto = new StringBuilder();
+        for (int vertice : rota.caminho()) {
+            if (texto.length() > 0) {
+                texto.append(" -> ");
+            }
+            texto.append(localidade(sistema, vertice));
+        }
+        return texto.toString();
+    }
+
+    static String cabecalhoDeRotas() {
+        return String.format("%-24s %-8s %-12s %s", "Critério", "Trechos", "Distância", "Tempo");
+    }
+
+    static String linhaDeRota(String criterio, ResultadoCaminho rota) {
+        return String.format("%-24s %-8d %-12s %d min", criterio, rota.quantidadeTrechos(),
+                km(rota.distanciaKm()), rota.tempoMin());
+    }
+
+    /** Frase que resume se os três critérios escolheram caminhos iguais ou diferentes. */
+    static String conclusaoDaComparacao(ComparacaoRotas c) {
+        switch (c.caminhosDistintos()) {
+            case 1:
+                return "Os três critérios escolheram o mesmo caminho neste par.";
+            case 2:
+                String quem = c.bfsIgualDistancia() ? "BFS = menor distância"
+                        : c.bfsIgualTempo() ? "BFS = menor tempo" : "menor distância = menor tempo";
+                return "Dois critérios coincidem e o outro escolheu um caminho diferente (" + quem + ").";
+            default:
+                return "Os três critérios escolheram caminhos diferentes: distância e tempo "
+                        + "não são proporcionais, e a BFS só conta trechos.";
+        }
     }
 }
