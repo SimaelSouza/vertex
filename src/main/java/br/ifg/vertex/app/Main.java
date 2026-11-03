@@ -20,8 +20,9 @@ public class Main {
         Entrada entrada = new Entrada(System.in);
         try {
             SistemaCidades sistema = new SistemaCidades();
-            DadosTeste.carregar(sistema);
-            Console.ok(sistema.listarLocalidades().size() + " localidades de teste carregadas.");
+            DadosTeste.carregarTudo(sistema);
+            Console.ok(sistema.listarLocalidades().size() + " localidades e "
+                    + sistema.getGrafo().quantidadeArestas() + " conexões de teste carregadas.");
 
             new MenuPrincipal(entrada, sistema).executar();
         } catch (EntradaEncerradaException e) {

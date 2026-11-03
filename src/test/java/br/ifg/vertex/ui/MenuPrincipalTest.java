@@ -306,14 +306,85 @@ class MenuPrincipalTest {
         assertTrue(tela.contains("Alcançou 1 de 13 localidades."));
     }
 
+    // ---------------- rotas ----------------
+
+    private static SistemaCidades sistemaCompleto() {
+        SistemaCidades sistema = new SistemaCidades();
+        DadosTeste.carregarTudo(sistema);
+        return sistema;
+    }
+
+    @Test
+    void menorRotaPorDistanciaMostraOsTrechosEOsTotais() {
+        String tela = rodar(sistemaCompleto(), "11", "1", "20", "70", "0", "0", "s");
+
+        assertTrue(tela.contains("[OK] Rota de menor distância encontrada."));
+        assertTrue(tela.contains("Caminho: 20 (Novo Gama) -> 10 (Hospital Regional) -> 50 (Luziânia) -> 70 (Cidade Ocidental)"));
+        assertTrue(tela.contains("20 (Novo Gama) -> 10 (Hospital Regional) [14 km, 12 min]"));
+        assertTrue(tela.contains("Total: 39,8 km e 69 min em 3 trecho(s)."));
+    }
+
+    @Test
+    void menorRotaPorTempoEscolheOutroCaminho() {
+        String tela = rodar(sistemaCompleto(), "11", "2", "20", "70", "0", "0", "s");
+
+        assertTrue(tela.contains("[OK] Rota de menor tempo encontrada."));
+        assertTrue(tela.contains("Total: 52 km e 38 min em 3 trecho(s)."));
+    }
+
+    @Test
+    void rotaParaDestinoInalcancavelMostraAviso() {
+        String tela = rodar(sistemaCompleto(), "11", "1", "50", "90", "0", "0", "s");
+        assertTrue(tela.contains("[AVISO] Não existe rota de 50 (Luziânia) até 90 (IFG (campus)) seguindo o sentido das vias."));
+    }
+
+    @Test
+    void rotaComOrigemIgualAoDestinoAvisaEMostraCustoZero() {
+        String tela = rodar(sistemaCompleto(), "11", "1", "50", "50", "0", "0", "s");
+        assertTrue(tela.contains("[AVISO] A origem e o destino são a mesma localidade."));
+    }
+
+    @Test
+    void rotaComIdInexistenteMostraErroEContinuaNoSubmenu() {
+        String tela = rodar(sistemaCompleto(), "11", "1", "999", "1", "50", "888", "0", "0", "s");
+
+        assertEquals(2, contar(tela, "[ERRO] Não existe localidade cadastrada com o ID"));
+        assertTrue(tela.contains("[OK] Programa encerrado"));
+    }
+
+    @Test
+    void compararRotasMostraATabelaComOsTresCaminhosDiferentes() {
+        String tela = rodar(sistemaCompleto(), "13", "20", "70", "0", "s");
+
+        assertTrue(tela.contains("Menos trechos (BFS)"));
+        assertTrue(tela.contains("72,5 km"));
+        assertTrue(tela.contains("105 min"));
+        assertTrue(tela.contains("39,8 km"));
+        assertTrue(tela.contains("38 min"));
+        assertTrue(tela.contains("[OK] Os três critérios escolheram caminhos diferentes"));
+    }
+
+    @Test
+    void compararRotasInformaQuandoDoisCriteriosCoincidemOuTodos() {
+        assertTrue(rodar(sistemaCompleto(), "13", "3", "70", "0", "s").contains("BFS = menor tempo"));
+        assertTrue(rodar(sistemaCompleto(), "13", "50", "30", "0", "s")
+                .contains("[OK] Os três critérios escolheram o mesmo caminho neste par."));
+    }
+
+    @Test
+    void compararRotasSemCaminhoMostraAviso() {
+        String tela = rodar(sistemaCompleto(), "13", "50", "95", "0", "s");
+        assertTrue(tela.contains("[AVISO] Não existe rota de 50 (Luziânia) até 95 (Bairro isolado (sem vias))"));
+    }
+
     // ---------------- geral ----------------
 
     @Test
     void opcoesAindaNaoImplementadasAvisamEVoltamAoMenu() {
-        String tela = rodar(sistemaDeTeste(), "11", "12", "0", "s");
+        String tela = rodar(sistemaDeTeste(), "12", "15", "0", "s");
 
-        assertTrue(tela.contains("[AVISO] A funcionalidade \"Rotas (Dijkstra)\" ainda não foi implementada"));
         assertTrue(tela.contains("[AVISO] A funcionalidade \"Conectividade e relatórios\" ainda não foi implementada"));
+        assertTrue(tela.contains("[AVISO] A funcionalidade \"Testes automáticos\" ainda não foi implementada"));
     }
 
     @Test
