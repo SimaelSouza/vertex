@@ -22,8 +22,8 @@ import java.util.Queue;
  * </ul>
  *
  * <p>Operações: inserir, pesquisar, remover (3 casos), atualizar, menor/maior,
- * contagens, altura, nível, vazia e os quatro percursos. Balanceamento e vetor
- * por níveis entram na etapa 4.</p>
+ * contagens, altura, nível, vazia, os quatro percursos, análise e reconstrução
+ * balanceada e a representação em vetor por níveis (com o estudo de memória).</p>
  */
 public class ArvoreBinariaBusca {
 
@@ -395,5 +395,192 @@ public class ArvoreBinariaBusca {
             }
         }
         return resultado;
+    }
+
+    // ------------------------------------------------------------------
+    // Balanceamento
+    // ------------------------------------------------------------------
+
+    /**
+     * Analisa o balanceamento de TODOS os nós, em ordem crescente de ID.
+     * Cada item traz as alturas das subárvores esquerda e direita do nó.
+     */
+    public List<BalanceamentoNo> analisarBalanceamento() {
+        List<BalanceamentoNo> resultado = new ArrayList<>();
+        analisar(raiz, resultado);
+        return resultado;
+    }
+
+    /**
+     * Devolve a altura da subárvore em {@code no} e, de quebra, registra a análise
+     * de cada nó. Calcular as alturas junto com a análise (em vez de chamar
+     * {@code altura()} em cada nó) mantém o custo em O(n).
+     */
+    private int analisar(NoArvore no, List<BalanceamentoNo> resultado) {
+        if (no == null) {
+            return -1;
+        }
+        int alturaEsquerda = analisar(no.getEsquerdo(), resultado);
+
+        // Reserva o lugar deste nó na lista agora (depois da esquerda, antes da direita)
+        // para o resultado sair em ordem crescente de ID; preenche quando souber a direita.
+        int posicao = resultado.size();
+        resultado.add(null);
+        int alturaDireita = analisar(no.getDireito(), resultado);
+        resultado.set(posicao, new BalanceamentoNo(no.getId(), alturaEsquerda, alturaDireita));
+
+        return 1 + Math.max(alturaEsquerda, alturaDireita);
+    }
+
+    /** A árvore é balanceada quando TODOS os nós têm diferença de altura de no máximo 1. */
+    public boolean estaBalanceada() {
+        return nosDesbalanceados().isEmpty();
+    }
+
+    /** Só os nós que violam o critério (diferença maior que 1), em ordem de ID. */
+    public List<BalanceamentoNo> nosDesbalanceados() {
+        List<BalanceamentoNo> violadores = new ArrayList<>();
+        for (BalanceamentoNo analise : analisarBalanceamento()) {
+            if (!analise.estaBalanceado()) {
+                violadores.add(analise);
+            }
+        }
+        return violadores;
+    }
+
+    /**
+     * Reconstrói a árvore como ABB balanceada: pega os elementos em ordem crescente
+     * (percurso em ordem), usa o do meio como raiz e repete para a metade esquerda
+     * e para a metade direita. As duas metades diferem em no máximo 1 elemento,
+     * então a altura resultante é a mínima possível: floor(log2 n).
+     *
+     * <p>Só os nós são recriados; os objetos {@link Localidade} são os mesmos. Como o
+     * grafo guarda apenas IDs, as conexões não são afetadas.</p>
+     */
+    public void reconstruirBalanceada() {
+        List<Localidade> ordenadas = emOrdem();
+        raiz = construirBalanceada(ordenadas, 0, ordenadas.size() - 1);
+    }
+
+    /**
+     * Cópia balanceada desta árvore, sem alterar a original (usada para comparar
+     * o armazenamento "antes e depois"). Compartilha os mesmos objetos
+     * {@link Localidade}; só a estrutura de nós é nova.
+     */
+    public ArvoreBinariaBusca copiaBalanceada() {
+        ArvoreBinariaBusca copia = new ArvoreBinariaBusca();
+        List<Localidade> ordenadas = emOrdem();
+        copia.raiz = copia.construirBalanceada(ordenadas, 0, ordenadas.size() - 1);
+        return copia;
+    }
+
+    /** Monta a subárvore balanceada com os itens de {@code ini} a {@code fim} (inclusive). */
+    private NoArvore construirBalanceada(List<Localidade> ordenadas, int ini, int fim) {
+        if (ini > fim) {
+            return null;
+        }
+        int meio = (ini + fim) >>> 1; // meio (o inferior, se a quantidade for par)
+        NoArvore no = new NoArvore(ordenadas.get(meio));
+        no.setEsquerdo(construirBalanceada(ordenadas, ini, meio - 1));
+        no.setDireito(construirBalanceada(ordenadas, meio + 1, fim));
+        return no;
+    }
+
+    /**
+     * Árvore "em escada" para o estudo comparativo: IDs 1, 2, 3... inseridos em ordem
+     * crescente, o pior caso (cada nó só tem filho direito, altura = quantidade - 1).
+     */
+    public static ArvoreBinariaBusca escadaDeExemplo(int quantidade) {
+        if (quantidade < 0) {
+            throw new IllegalArgumentException("A quantidade não pode ser negativa.");
+        }
+        ArvoreBinariaBusca arvore = new ArvoreBinariaBusca();
+        for (int id = 1; id <= quantidade; id++) {
+            arvore.inserir(new Localidade(id, "Exemplo " + id, TipoLocalidade.BAIRRO, 0));
+        }
+        return arvore;
+    }
+
+    // ------------------------------------------------------------------
+    // Vetor por níveis (índices começando em 1)
+    // ------------------------------------------------------------------
+
+    /**
+     * Maior vetor que {@link #paraVetor()} aceita alocar. Uma árvore desbalanceada
+     * pede um vetor gigantesco (2^altura), então acima disso só calculamos o tamanho.
+     */
+    public static final int LIMITE_VETOR = 100_000;
+
+    /** Índice do filho esquerdo de {@code i}: {@code 2 * i}. */
+    public static int indiceFilhoEsquerdo(int i) {
+        validarIndice(i);
+        return 2 * i;
+    }
+
+    /** Índice do filho direito de {@code i}: {@code 2 * i + 1}. */
+    public static int indiceFilhoDireito(int i) {
+        validarIndice(i);
+        return 2 * i + 1;
+    }
+
+    /** Índice do pai de {@code i}: {@code i / 2} (divisão inteira). A raiz (1) devolve 0, "sem pai". */
+    public static int indicePai(int i) {
+        validarIndice(i);
+        return i / 2;
+    }
+
+    private static void validarIndice(int i) {
+        if (i < 1) {
+            throw new IllegalArgumentException("Os índices do vetor começam em 1.");
+        }
+    }
+
+    /**
+     * Quantas posições (de 1 em diante) um vetor por níveis precisa para uma árvore
+     * dessa altura: {@code 2^(altura+1) - 1}, que é o caso em que todos os níveis
+     * estão cheios. Árvore vazia precisa de 0. Para alturas a partir de 62, o valor
+     * não cabe em um {@code long} e devolvemos {@link Long#MAX_VALUE}.
+     */
+    public static long posicoesNecessarias(int altura) {
+        if (altura < 0) {
+            return 0;
+        }
+        if (altura >= 62) {
+            return Long.MAX_VALUE;
+        }
+        return (1L << (altura + 1)) - 1;
+    }
+
+    /**
+     * Representa a árvore em um vetor por níveis: raiz no índice 1, filhos de {@code i}
+     * em {@code 2i} e {@code 2i+1}. Posições sem nó ficam {@code null}, e o índice 0
+     * não é usado (o vetor tem {@code posicoesNecessarias + 1} elementos).
+     *
+     * @throws IllegalStateException se o vetor passar de {@link #LIMITE_VETOR} posições
+     *                               (use {@link #estudarArmazenamento()} para ver o tamanho)
+     */
+    public Localidade[] paraVetor() {
+        long necessarias = posicoesNecessarias(altura());
+        if (necessarias > LIMITE_VETOR) {
+            throw new IllegalStateException("O vetor precisaria de " + necessarias
+                    + " posições (limite: " + LIMITE_VETOR + ").");
+        }
+        Localidade[] vetor = new Localidade[(int) necessarias + 1];
+        preencherVetor(raiz, 1, vetor);
+        return vetor;
+    }
+
+    private void preencherVetor(NoArvore no, int indice, Localidade[] vetor) {
+        if (no == null) {
+            return;
+        }
+        vetor[indice] = no.getLocalidade();
+        preencherVetor(no.getEsquerdo(), indiceFilhoEsquerdo(indice), vetor);
+        preencherVetor(no.getDireito(), indiceFilhoDireito(indice), vetor);
+    }
+
+    /** Estudo de memória desta árvore: posições necessárias, vazias e % de desperdício. */
+    public EstudoArmazenamento estudarArmazenamento() {
+        return EstudoArmazenamento.de(quantidadeNos(), altura());
     }
 }
