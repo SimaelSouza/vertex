@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import br.ifg.vertex.arvore.ArvoreBinariaBusca;
 import br.ifg.vertex.grafo.Grafo;
+import br.ifg.vertex.grafo.ResultadoBusca;
 import br.ifg.vertex.modelo.Aresta;
 import br.ifg.vertex.modelo.Localidade;
 import br.ifg.vertex.modelo.TipoLocalidade;
@@ -303,6 +304,44 @@ class SistemaCidadesTest {
         // e as consultas continuam funcionando depois de reconstruir
         assertEquals("Formosa", sistema.nomeDe(80));
         assertTrue(sistema.existeConexao(50, 30));
+    }
+
+    // ---------------- buscas ----------------
+
+    @Test
+    void buscasExigemQueAOrigemSejaUmaLocalidadeCadastrada() {
+        SistemaCidades sistema = sistemaCom(1, 2);
+        assertEquals("Não existe localidade cadastrada com o ID 99.", assertThrows(
+                RegraNegocioException.class, () -> sistema.buscaEmLargura(99)).getMessage());
+        assertThrows(RegraNegocioException.class, () -> sistema.buscaEmProfundidade(99));
+    }
+
+    @Test
+    void buscasSeguemAsConexoesDoSistema() {
+        SistemaCidades sistema = sistemaCom(1, 2, 3, 4);
+        sistema.conectar(1, 2, 5, 5, true);
+        sistema.conectar(2, 3, 5, 5, false);
+
+        ResultadoBusca largura = sistema.buscaEmLargura(1);
+        ResultadoBusca profundidade = sistema.buscaEmProfundidade(1);
+
+        assertEquals(List.of(1, 2, 3), largura.ordemVisita());
+        assertEquals(List.of(1, 2, 3), profundidade.ordemVisita());
+        assertEquals(List.of(4), largura.naoAlcancados());
+        assertEquals(List.of(3), sistema.buscaEmLargura(3).ordemVisita()); // 3 não tem saída
+    }
+
+    @Test
+    void depoisDeRemoverUmaLocalidadeAsBuscasNaoPassamMaisPorEla() {
+        SistemaCidades sistema = sistemaCom(1, 2, 3);
+        sistema.conectar(1, 2, 5, 5, true);
+        sistema.conectar(2, 3, 5, 5, true);
+        sistema.removerLocalidade(2);
+
+        ResultadoBusca r = sistema.buscaEmLargura(1);
+
+        assertEquals(List.of(1), r.ordemVisita());
+        assertEquals(List.of(3), r.naoAlcancados());
     }
 
     // ---------------- consistência ----------------

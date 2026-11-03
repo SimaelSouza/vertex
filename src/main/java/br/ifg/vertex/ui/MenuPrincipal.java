@@ -4,7 +4,7 @@ import br.ifg.vertex.servico.RegraNegocioException;
 import br.ifg.vertex.servico.SistemaCidades;
 
 /**
- * Menu principal (as 15 opções do slide 21). As opções 1 a 8 já funcionam; as demais
+ * Menu principal (as 15 opções do slide 21). As opções 1 a 10 já funcionam; as demais
  * avisam em qual etapa do roadmap serão implementadas.
  */
 public class MenuPrincipal {
@@ -13,12 +13,14 @@ public class MenuPrincipal {
     private final MenuLocalidades localidades;
     private final MenuArvore arvore;
     private final MenuConexoes conexoes;
+    private final MenuBuscas buscas;
 
     public MenuPrincipal(Entrada entrada, SistemaCidades sistema) {
         this.entrada = entrada;
         this.localidades = new MenuLocalidades(entrada, sistema);
         this.arvore = new MenuArvore(entrada, sistema);
         this.conexoes = new MenuConexoes(entrada, sistema);
+        this.buscas = new MenuBuscas(entrada, sistema);
     }
 
     /** Laço principal: mostra o menu, lê a opção e executa até o usuário sair. */
@@ -79,7 +81,8 @@ public class MenuPrincipal {
             case 6 -> arvore.percursos();
             case 7 -> arvore.balancear();
             case 8 -> conexoes.executar();
-            case 9, 10 -> emBreve("Buscas BFS e DFS", "6");
+            case 9 -> buscas.largura();
+            case 10 -> buscas.profundidade();
             case 11, 13 -> emBreve("Rotas (Dijkstra)", "7");
             case 12, 14 -> emBreve("Conectividade e relatórios", "8");
             case 15 -> emBreve("Testes automáticos", "9");

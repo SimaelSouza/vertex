@@ -1,7 +1,9 @@
 package br.ifg.vertex.servico;
 
 import br.ifg.vertex.arvore.ArvoreBinariaBusca;
+import br.ifg.vertex.grafo.BuscasGrafo;
 import br.ifg.vertex.grafo.Grafo;
+import br.ifg.vertex.grafo.ResultadoBusca;
 import br.ifg.vertex.modelo.Aresta;
 import br.ifg.vertex.modelo.Localidade;
 import br.ifg.vertex.modelo.TipoLocalidade;
@@ -326,5 +328,17 @@ public class SistemaCidades {
         return arvore.pesquisar(id)
                 .map(localidade -> id + " (" + localidade.getNome() + ")")
                 .orElse(String.valueOf(id));
+    }
+
+    /** BFS a partir de uma localidade: visita por "ondas" e dá o caminho com menos paradas. */
+    public ResultadoBusca buscaEmLargura(int origem) {
+        exigirLocalidade(origem);
+        return BuscasGrafo.emLargura(grafo, origem);
+    }
+
+    /** DFS a partir de uma localidade: vai o mais fundo possível antes de voltar. */
+    public ResultadoBusca buscaEmProfundidade(int origem) {
+        exigirLocalidade(origem);
+        return BuscasGrafo.emProfundidade(grafo, origem);
     }
 }
