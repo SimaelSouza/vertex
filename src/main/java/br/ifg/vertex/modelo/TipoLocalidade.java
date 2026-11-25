@@ -1,8 +1,5 @@
 package br.ifg.vertex.modelo;
 
-/**
- * Tipos de localidade que o sistema gerencia (cidades, bairros e instituições).
- */
 public enum TipoLocalidade {
     CIDADE("Cidade"),
     BAIRRO("Bairro"),
@@ -14,7 +11,6 @@ public enum TipoLocalidade {
         this.rotulo = rotulo;
     }
 
-    /** Texto amigável para mostrar ao usuário. */
     public String getRotulo() {
         return rotulo;
     }

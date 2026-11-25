@@ -55,7 +55,7 @@ class GrafoTest {
         grafo.adicionarAresta(new Aresta(1, 2, 5.5, 10));
 
         assertTrue(grafo.existeAresta(1, 2));
-        assertFalse(grafo.existeAresta(2, 1)); // adjacência é direcional
+        assertFalse(grafo.existeAresta(2, 1));
         assertEquals(1, grafo.quantidadeArestas());
     }
 
@@ -85,7 +85,7 @@ class GrafoTest {
 
         assertThrows(IllegalArgumentException.class, () -> grafo.adicionarAresta(new Aresta(1, 2, 99, 99)));
         assertEquals(1, grafo.quantidadeArestas());
-        assertEquals(5.0, grafo.obterAresta(1, 2).get().distanciaKm()); // a original ficou
+        assertEquals(5.0, grafo.obterAresta(1, 2).get().distanciaKm());
     }
 
     @Test
@@ -99,7 +99,7 @@ class GrafoTest {
     @Test
     void conexaoBidirecionalNaoDeixaMetadeCriadaSeAVoltaJaExiste() {
         Grafo grafo = grafoCom(1, 2);
-        grafo.adicionarAresta(new Aresta(2, 1, 3, 3)); // só a volta existe
+        grafo.adicionarAresta(new Aresta(2, 1, 3, 3));
 
         assertThrows(IllegalArgumentException.class, () -> grafo.adicionarConexaoBidirecional(1, 2, 5, 5));
         assertEquals(1, grafo.quantidadeArestas());
@@ -124,9 +124,9 @@ class GrafoTest {
 
         assertTrue(grafo.removerAresta(1, 2));
         assertFalse(grafo.existeAresta(1, 2));
-        assertTrue(grafo.existeAresta(2, 1)); // a volta fica
-        assertFalse(grafo.removerAresta(1, 2));  // já tinha sido removida
-        assertFalse(grafo.removerAresta(9, 1));  // origem inexistente
+        assertTrue(grafo.existeAresta(2, 1));
+        assertFalse(grafo.removerAresta(1, 2));
+        assertFalse(grafo.removerAresta(9, 1));
     }
 
     @Test
@@ -136,7 +136,7 @@ class GrafoTest {
 
         assertTrue(grafo.alterarPesos(1, 2, 8.5, 14));
         assertEquals(new Aresta(1, 2, 8.5, 14), grafo.obterAresta(1, 2).get());
-        assertFalse(grafo.alterarPesos(2, 1, 1, 1)); // não existe a volta
+        assertFalse(grafo.alterarPesos(2, 1, 1, 1));
         assertFalse(grafo.alterarPesos(9, 1, 1, 1));
     }
 
@@ -155,8 +155,8 @@ class GrafoTest {
     @Test
     void removerVerticeApagaAsArestasQueSaemEAsQueChegam() {
         Grafo grafo = grafoCom(1, 2, 3);
-        grafo.adicionarConexaoBidirecional(1, 2, 1, 1); // 1<->2
-        grafo.adicionarAresta(new Aresta(3, 2, 1, 1));  // 3->2 (chega no 2)
+        grafo.adicionarConexaoBidirecional(1, 2, 1, 1);
+        grafo.adicionarAresta(new Aresta(3, 2, 1, 1));
         grafo.adicionarAresta(new Aresta(2, 3, 1, 1));  // 2->3 (sai do 2)
         grafo.adicionarAresta(new Aresta(1, 3, 1, 1));  // não toca o 2
 
@@ -165,7 +165,7 @@ class GrafoTest {
         assertFalse(grafo.contemVertice(2));
         assertEquals(List.of(new Aresta(1, 3, 1, 1)), grafo.arestas());
         assertEquals(List.of(1, 3), grafo.vertices());
-        assertFalse(grafo.removerVertice(2)); // já não existe
+        assertFalse(grafo.removerVertice(2));
     }
 
     // ---------------- vizinhança e graus ----------------
@@ -188,7 +188,7 @@ class GrafoTest {
     @Test
     void verticesIsoladosNaoTemArestaNemDeEntradaNemDeSaida() {
         Grafo grafo = grafoCom(1, 2, 3, 4);
-        grafo.adicionarAresta(new Aresta(1, 2, 1, 1)); // 2 só recebe, 1 só envia: nenhum é isolado
+        grafo.adicionarAresta(new Aresta(1, 2, 1, 1));
 
         assertEquals(List.of(3, 4), grafo.verticesIsolados());
     }
@@ -211,7 +211,7 @@ class GrafoTest {
         Grafo grafo = grafoCom(1, 2);
         grafo.adicionarAresta(new Aresta(1, 2, 1, 1));
 
-        grafo.arestasDeSaida(1).clear(); // mexer na cópia não pode afetar o grafo
+        grafo.arestasDeSaida(1).clear();
 
         assertEquals(1, grafo.quantidadeArestas());
     }
@@ -223,6 +223,6 @@ class GrafoTest {
         assertThrows(IllegalArgumentException.class, () -> grafo.arestasDeSaida(9));
         assertThrows(IllegalArgumentException.class, () -> grafo.grauEntrada(9));
         assertThrows(IllegalArgumentException.class, () -> grafo.grauSaida(9));
-        assertFalse(grafo.existeAresta(9, 1)); // perguntar "existe?" nunca lança
+        assertFalse(grafo.existeAresta(9, 1));
     }
 }

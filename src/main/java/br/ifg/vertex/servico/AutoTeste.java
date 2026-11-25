@@ -14,13 +14,6 @@ import br.ifg.vertex.modelo.TipoLocalidade;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Autoteste do programa (opção 15 do menu).
- *
- * <p>Cada caso monta as PRÓPRIAS estruturas (uma árvore, um grafo ou um sistema novo), então
- * rodar os testes nunca mexe nos dados que estão cadastrados no programa. Os casos que usam
- * o {@link SistemaCidades} terminam conferindo {@code verificarConsistencia()}.</p>
- */
 public final class AutoTeste {
 
     private static final String ARVORE = "Árvore";
@@ -33,7 +26,6 @@ public final class AutoTeste {
     private AutoTeste() {
     }
 
-    /** Roda os casos na ordem; uma falha (ou exceção inesperada) não impede os demais. */
     public static List<ResultadoTeste> executar(List<CasoDeTeste> casos) {
         List<ResultadoTeste> resultados = new ArrayList<>();
         for (CasoDeTeste caso : casos) {
@@ -50,7 +42,6 @@ public final class AutoTeste {
         return resultados;
     }
 
-    /** Os casos da parte de domínio (árvore, grafo, algoritmos e integração). */
     public static List<CasoDeTeste> casos() {
         List<CasoDeTeste> c = new ArrayList<>();
         casosDaArvore(c);

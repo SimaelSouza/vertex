@@ -2,7 +2,6 @@ package br.ifg.vertex.grafo;
 
 import br.ifg.vertex.modelo.Aresta;
 
-/** Qual peso da aresta o Dijkstra deve minimizar: a distância (km) ou o tempo (minutos). */
 public enum CriterioPeso {
 
     DISTANCIA("distância", "km"),
@@ -16,7 +15,6 @@ public enum CriterioPeso {
         this.unidade = unidade;
     }
 
-    /** O valor da aresta que este critério considera. */
     public double pesoDe(Aresta aresta) {
         return this == DISTANCIA ? aresta.distanciaKm() : aresta.tempoMin();
     }

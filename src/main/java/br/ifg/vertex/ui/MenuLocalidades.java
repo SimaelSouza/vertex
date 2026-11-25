@@ -6,14 +6,12 @@ import br.ifg.vertex.servico.ResultadoPesquisa;
 import br.ifg.vertex.servico.SistemaCidades;
 import java.util.Optional;
 
-/** Opções 1 a 4 do menu principal: cadastrar, pesquisar, atualizar e remover localidade. */
 class MenuLocalidades extends MenuBase {
 
     MenuLocalidades(Entrada entrada, SistemaCidades sistema) {
         super(entrada, sistema);
     }
 
-    /** Opção 1. */
     void cadastrar() {
         Console.subtitulo("Cadastrar localidade");
         int id = lerId("ID (número positivo): ");
@@ -29,7 +27,6 @@ class MenuLocalidades extends MenuBase {
         Console.ok("Localidade cadastrada: " + nova);
     }
 
-    /** Opção 2. */
     void pesquisar() {
         Console.subtitulo("Pesquisar localidade");
         int id = lerId("ID: ");
@@ -49,7 +46,6 @@ class MenuLocalidades extends MenuBase {
         Console.linha("  Comparações na busca: " + resultado.get().comparacoes());
     }
 
-    /** Opção 3: Enter vazio mantém o valor atual de cada campo; o ID nunca muda. */
     void atualizar() {
         Console.subtitulo("Atualizar localidade");
         int id = lerId("ID da localidade a atualizar: ");
@@ -64,7 +60,6 @@ class MenuLocalidades extends MenuBase {
         Console.ok("Localidade atualizada: " + sistema.exigirLocalidade(id));
     }
 
-    /** Opção 4: mostra o que será apagado e pede confirmação. */
     void remover() {
         Console.subtitulo("Remover localidade");
         int id = lerId("ID da localidade a remover: ");
@@ -81,6 +76,8 @@ class MenuLocalidades extends MenuBase {
         int removidas = sistema.removerLocalidade(id);
         Console.ok("Localidade " + id + " removida, junto com " + removidas + " conexões.");
     }
+
+    //apoio
 
     private TipoLocalidade lerTipo() {
         listarTipos();

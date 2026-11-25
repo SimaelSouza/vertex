@@ -60,7 +60,6 @@ class RelatoriosTest {
         assertTrue(b.contains("> Como ficaria balanceada"));
         assertTrue(b.contains("Altura: 3 | Folhas: 6 | Nós internos: 7"));
         assertTrue(b.contains("96 (não existe)"));
-        // a árvore real continua desbalanceada: o relatório só lê
         assertEquals(5, s.getArvore().altura());
     }
 

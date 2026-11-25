@@ -3,9 +3,6 @@ package br.ifg.vertex.ui;
 import br.ifg.vertex.servico.RegraNegocioException;
 import br.ifg.vertex.servico.SistemaCidades;
 
-/**
- * Menu principal (as 15 opções do slide 21). Todas funcionam.
- */
 public class MenuPrincipal {
 
     private final Entrada entrada;
@@ -39,11 +36,10 @@ public class MenuPrincipal {
                 int opcao = entrada.lerInteiro("Escolha uma opção: ", 0, 15);
                 continuar = tratarOpcao(opcao);
             } catch (EntradaEncerradaException e) {
-                throw e; // quem trata é o Main
+                throw e;
             } catch (RegraNegocioException e) {
-                Console.erro(e.getMessage()); // regra violada: mensagem pronta, volta ao menu
+                Console.erro(e.getMessage());
             } catch (RuntimeException e) {
-                // Última rede de proteção: nenhum erro inesperado derruba o programa.
                 Console.erro("Ocorreu um erro inesperado (" + e.getMessage() + "). Voltando ao menu.");
             }
         }
@@ -71,7 +67,6 @@ public class MenuPrincipal {
         Console.linhaEmBranco();
     }
 
-    /** @return {@code false} quando o usuário confirmou a saída */
     private boolean tratarOpcao(int opcao) {
         switch (opcao) {
             case 0 -> {

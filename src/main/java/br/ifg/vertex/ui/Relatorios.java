@@ -9,10 +9,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-/**
- * Os quatro relatórios do enunciado (A cadastro, B árvore, C rede, D rotas). Só leitura:
- * cada método consulta o {@link SistemaCidades} e devolve o texto pronto para imprimir.
- */
 final class Relatorios {
 
     private static final int MAXIMO_DE_CICLOS_MOSTRADOS = 5;
@@ -36,7 +32,7 @@ final class Relatorios {
         Localidade maior = localidades.get(0);
         Localidade menor = localidades.get(0);
         int[] porTipo = new int[TipoLocalidade.values().length];
-        for (Localidade localidade : localidades) { // um único percurso acumula tudo
+        for (Localidade localidade : localidades) {
             texto.append(String.format("%-6d %-32s %-13s %12s%n", localidade.getId(), localidade.getNome(),
                     localidade.getTipo().getRotulo(), Formatacao.numero(localidade.getPopulacao())));
             populacaoTotal += localidade.getPopulacao();
@@ -64,10 +60,6 @@ final class Relatorios {
 
     // ---------------- B: estrutura da árvore ----------------
 
-    /**
-     * Mostra a árvore atual e, se ela estiver desbalanceada, também como ficaria balanceada
-     * (numa cópia: a árvore real não é alterada), para evidenciar a diferença nas comparações.
-     */
     static String arvore(SistemaCidades sistema) {
         ArvoreBinariaBusca atual = sistema.getArvore();
         StringBuilder texto = new StringBuilder("RELATÓRIO B - ESTRUTURA DA ÁRVORE\n");
@@ -154,7 +146,6 @@ final class Relatorios {
                     .append(MAXIMO_DE_CICLOS_MOSTRADOS).append(")\n");
         }
 
-        // localidades com mais conexões (grau de entrada + saída); em caso de empate, todas
         int maiorGrau = -1;
         List<Integer> campeas = new ArrayList<>();
         for (int id : vertices) {

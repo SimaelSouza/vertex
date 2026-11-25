@@ -3,28 +3,11 @@ package br.ifg.vertex.servico;
 import br.ifg.vertex.modelo.Localidade;
 import br.ifg.vertex.modelo.TipoLocalidade;
 
-/**
- * Dados de teste pré-cadastrados (13 localidades com cidades reais do Entorno do DF).
- *
- * <p>Tudo entra pelo {@link SistemaCidades}, então a própria carga já exercita as regras
- * de integração. A ordem de inserção foi escolhida para a árvore nascer DESBALANCEADA
- * (altura 5, com 4 nós violando o critério), assim a opção "Balancear árvore" tem algo
- * para corrigir na demonstração.</p>
- *
- * <p>As populações são valores aproximados/fictícios, todos diferentes, para que a
- * localidade de maior e a de menor população sejam únicas (Relatório A).</p>
- *
- * <p>As conexões ({@link #carregarConexoes}) formam três regiões: a rede principal (10
- * localidades, com o hub 50), o par Cristalina-Formosa, desconectado do resto, e o bairro
- * 95, isolado. {@link #carregar} cadastra só as localidades; {@link #carregarTudo} faz as
- * duas coisas, que é o que o programa usa ao abrir.</p>
- */
 public final class DadosTeste {
 
     private DadosTeste() {
     }
 
-    /** Cadastra as 13 localidades de teste, na ordem que deixa a árvore desbalanceada. */
     public static void carregar(SistemaCidades sistema) {
         sistema.cadastrarLocalidade(50, "Luziânia", TipoLocalidade.CIDADE, 210_000);
         sistema.cadastrarLocalidade(30, "Valparaíso de Goiás", TipoLocalidade.CIDADE, 180_000);
@@ -41,13 +24,11 @@ public final class DadosTeste {
         sistema.cadastrarLocalidade(95, "Bairro isolado (sem vias)", TipoLocalidade.BAIRRO, 450);
     }
 
-    /** Cadastra as localidades e depois as conexões de teste. */
     public static void carregarTudo(SistemaCidades sistema) {
         carregar(sistema);
         carregarConexoes(sistema);
     }
 
-    /** Apaga tudo o que está cadastrado e carrega de novo os dados de teste (reinicia a demonstração). */
     public static void recarregar(SistemaCidades sistema) {
         for (Localidade localidade : sistema.listarLocalidades()) {
             sistema.removerLocalidade(localidade.getId());
@@ -55,13 +36,6 @@ public final class DadosTeste {
         carregarTudo(sistema);
     }
 
-    /**
-     * Cria as conexões de teste (as localidades precisam já estar cadastradas). Cenários:
-     * pares de mão dupla; vias de mão única (90 chega no 15, mas o 15 não chega no 90);
-     * um ciclo só de mão única (3, 15, 5); o "hub" 50 com 5 vias de mão dupla; uma região sem
-     * ciclos (60-80), desconectada da rede principal; o bairro 95 sem nenhuma via; e tempos que
-     * não são proporcionais às distâncias, para que os critérios de rota divirjam.
-     */
     public static void carregarConexoes(SistemaCidades sistema) {
         // hub: Luziânia
         sistema.conectar(50, 30, 12.5, 20, true);

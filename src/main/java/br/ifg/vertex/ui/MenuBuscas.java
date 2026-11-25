@@ -65,7 +65,6 @@ class MenuBuscas extends MenuBase {
         }
     }
 
-    /** A DFS também serve para achar ciclos: mostra os que ficam ao alcance da origem. */
     private void mostrarCiclos(ResultadoBusca busca) {
         List<List<Integer>> ciclos = sistema.ciclos().stream()
                 .filter(ciclo -> ciclo.stream().allMatch(busca::alcancou))

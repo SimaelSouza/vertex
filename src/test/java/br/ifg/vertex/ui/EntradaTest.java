@@ -11,7 +11,6 @@ import org.junit.jupiter.api.Test;
 
 class EntradaTest {
 
-    /** Cria uma Entrada que "digita" as linhas dadas, uma por vez. */
     private Entrada com(String... linhas) {
         String texto = String.join("\n", linhas) + "\n";
         return new Entrada(new ByteArrayInputStream(texto.getBytes(StandardCharsets.UTF_8)));

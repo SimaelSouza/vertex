@@ -8,7 +8,7 @@ import br.ifg.vertex.servico.ResultadoBalanceamento;
 import br.ifg.vertex.servico.SistemaCidades;
 import java.util.List;
 
-/** Opções 5, 6 e 7 do menu principal: visualizar, percorrer e balancear a árvore. */
+/** Opções 5, 6 e 7 do menu principal */
 class MenuArvore extends MenuBase {
 
     MenuArvore(Entrada entrada, SistemaCidades sistema) {
@@ -19,9 +19,7 @@ class MenuArvore extends MenuBase {
         return sistema.getArvore();
     }
 
-    // ------------------------------------------------------------------
     // Opção 5: visualizar
-    // ------------------------------------------------------------------
 
     void visualizar() {
         executarSubmenu("Visualizar árvore", List.of(
@@ -79,9 +77,7 @@ class MenuArvore extends MenuBase {
         }
     }
 
-    // ------------------------------------------------------------------
     // Opção 6: percursos
-    // ------------------------------------------------------------------
 
     void percursos() {
         executarSubmenu("Percursos da árvore", List.of(
@@ -126,9 +122,7 @@ class MenuArvore extends MenuBase {
         Console.linha("  Visita nível por nível, da esquerda para a direita.");
     }
 
-    // ------------------------------------------------------------------
     // Opção 7: balanceamento
-    // ------------------------------------------------------------------
 
     void balancear() {
         executarSubmenu("Balancear árvore", List.of(
@@ -226,7 +220,7 @@ class MenuArvore extends MenuBase {
         Localidade[] vetor = arvore().paraVetor();
         Console.linha(String.format("%-8s %-8s %s", "Índice", "ID", "Nome"));
         for (int i = 1; i < vetor.length; i++) {
-            if (vetor[i] != null) { // as posições vazias ficam de fora da listagem
+            if (vetor[i] != null) {
                 Console.linha(String.format("%-8d %-8d %s", i, vetor[i].getId(), vetor[i].getNome()));
             }
         }

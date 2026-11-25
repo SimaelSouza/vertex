@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Set;
 import org.junit.jupiter.api.Test;
 
-/** Testa as conexões de teste e as rotas calculadas sobre elas (os cenários da demonstração). */
 class RotasDeTesteTest {
 
     private static SistemaCidades completo() {
@@ -44,7 +43,7 @@ class RotasDeTesteTest {
         assertTrue(s.existeConexao(40, 50));
         assertFalse(s.existeConexao(50, 40));
         assertTrue(s.menorRota(90, 15, CriterioPeso.TEMPO).existe());
-        assertFalse(s.menorRota(15, 90, CriterioPeso.TEMPO).existe()); // alcançabilidade assimétrica
+        assertFalse(s.menorRota(15, 90, CriterioPeso.TEMPO).existe());
     }
 
     @Test
@@ -140,7 +139,6 @@ class RotasDeTesteTest {
 
     // ---------------- verificação independente (força bruta) ----------------
 
-    /** Enumera todos os caminhos simples e guarda o menor km e o menor tempo. */
     private static void forcaBruta(SistemaCidades s, int atual, int destino, Set<Integer> usados,
                                    double km, int min, double[] melhor) {
         if (atual == destino) {
@@ -202,7 +200,7 @@ class RotasDeTesteTest {
         SistemaCidades s = completo();
         assertEquals(List.of(20, 10, 15, 70), s.menorRota(20, 70, CriterioPeso.TEMPO).caminho());
 
-        s.alterarConexao(10, 15, 16.0, 300, true); // a via ficou lentíssima
+        s.alterarConexao(10, 15, 16.0, 300, true);
 
         assertEquals(List.of(20, 10, 50, 70), s.menorRota(20, 70, CriterioPeso.TEMPO).caminho().subList(0, 4));
     }

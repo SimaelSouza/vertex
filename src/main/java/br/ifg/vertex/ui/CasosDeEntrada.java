@@ -9,11 +9,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- * Casos do autoteste sobre a leitura segura do teclado: simulam um usuário digitando entradas
- * inválidas e conferem que a {@link Entrada} insiste na pergunta em vez de quebrar. Como as
- * mensagens de erro da Entrada iriam para a tela, a saída é desviada durante cada caso.
- */
 final class CasosDeEntrada {
 
     private static final String GRUPO = "Entrada";

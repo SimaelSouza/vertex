@@ -14,7 +14,6 @@ import br.ifg.vertex.modelo.TipoLocalidade;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 
-/** Testes da integração árvore + grafo: as regras de consistência do slide 19. */
 class SistemaCidadesTest {
 
     private static SistemaCidades sistemaCom(int... ids) {
@@ -47,7 +46,7 @@ class SistemaCidadesTest {
 
         assertEquals("Já existe uma localidade com o ID 10.", erro.getMessage());
         assertEquals(2, sistema.getArvore().quantidadeNos());
-        assertEquals("Local 10", sistema.nomeDe(10)); // a original ficou
+        assertEquals("Local 10", sistema.nomeDe(10));
     }
 
     @Test
@@ -66,7 +65,6 @@ class SistemaCidadesTest {
 
     @Test
     void cadastrarDesfazAArvoreSeOGrafoFalhar() {
-        // grafo "contaminado": já tem o vértice 7, mas a árvore não tem a localidade 7
         Grafo grafo = new Grafo();
         grafo.adicionarVertice(7);
         ArvoreBinariaBusca arvore = new ArvoreBinariaBusca();
@@ -75,7 +73,7 @@ class SistemaCidadesTest {
         assertThrows(RegraNegocioException.class,
                 () -> sistema.cadastrarLocalidade(7, "X", TipoLocalidade.CIDADE, 1));
 
-        assertFalse(arvore.contem(7)); // o passo 1 foi desfeito: nada de localidade "meio cadastrada"
+        assertFalse(arvore.contem(7));
     }
 
     // ---------------- pesquisa, consulta e atualização ----------------
@@ -119,7 +117,7 @@ class SistemaCidadesTest {
 
         assertThrows(RegraNegocioException.class,
                 () -> sistema.atualizarLocalidade(1, "Novo", TipoLocalidade.CIDADE, -5));
-        assertEquals("Local 1", sistema.nomeDe(1)); // nada mudou
+        assertEquals("Local 1", sistema.nomeDe(1));
         assertThrows(RegraNegocioException.class,
                 () -> sistema.atualizarLocalidade(99, "X", TipoLocalidade.CIDADE, 1));
     }
@@ -170,7 +168,7 @@ class SistemaCidadesTest {
     @Test
     void conectarMaoDuplaRejeitaSeAVoltaJaExisteSemCriarMetade() {
         SistemaCidades sistema = sistemaCom(1, 2);
-        sistema.conectar(2, 1, 5, 5, false); // só a volta existe
+        sistema.conectar(2, 1, 5, 5, false);
 
         assertThrows(RegraNegocioException.class, () -> sistema.conectar(1, 2, 5, 5, true));
 
@@ -187,7 +185,7 @@ class SistemaCidadesTest {
 
         sistema.alterarConexao(1, 2, 8, 20, false);
         assertEquals(8.0, sistema.getGrafo().obterAresta(1, 2).get().distanciaKm());
-        assertEquals(5.0, sistema.getGrafo().obterAresta(2, 1).get().distanciaKm()); // volta intacta
+        assertEquals(5.0, sistema.getGrafo().obterAresta(2, 1).get().distanciaKm());
 
         sistema.alterarConexao(1, 2, 9, 25, true);
         assertEquals(new Aresta(1, 2, 9, 25), sistema.getGrafo().obterAresta(1, 2).get());
@@ -199,7 +197,7 @@ class SistemaCidadesTest {
         SistemaCidades sistema = sistemaCom(1, 2);
         assertThrows(RegraNegocioException.class, () -> sistema.alterarConexao(1, 2, 5, 5, false));
 
-        sistema.conectar(1, 2, 5, 10, false); // mão única
+        sistema.conectar(1, 2, 5, 10, false);
         assertThrows(RegraNegocioException.class, () -> sistema.alterarConexao(1, 2, 9, 9, true));
         assertEquals(new Aresta(1, 2, 5, 10), sistema.getGrafo().obterAresta(1, 2).get()); // nada mudou
     }
@@ -235,7 +233,7 @@ class SistemaCidadesTest {
         assertThrows(RegraNegocioException.class, () -> sistema.desconectar(1, 2, false));
         sistema.conectar(1, 2, 5, 10, false);
         assertThrows(RegraNegocioException.class, () -> sistema.desconectar(1, 2, true)); // sem volta
-        assertTrue(sistema.existeConexao(1, 2)); // nada foi removido
+        assertTrue(sistema.existeConexao(1, 2));
     }
 
     // ---------------- remoção de localidade ----------------
@@ -276,7 +274,7 @@ class SistemaCidadesTest {
 
         sistema.cadastrarLocalidade(2, "Nova", TipoLocalidade.BAIRRO, 1);
 
-        assertEquals(0, sistema.getGrafo().quantidadeArestas()); // a nova não herda as conexões
+        assertEquals(0, sistema.getGrafo().quantidadeArestas());
         assertTrue(sistema.estaConsistente());
     }
 

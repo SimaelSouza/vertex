@@ -1,12 +1,5 @@
 package br.ifg.vertex.modelo;
 
-/**
- * Uma localidade da região (cidade, bairro ou instituição).
- *
- * <p>O {@code id} é a chave usada pela árvore (ABB) e também o identificador do vértice
- * no grafo. Por isso ele é {@code final}: não pode mudar depois de criado.
- * Os demais campos podem ser atualizados, sempre respeitando as validações abaixo.</p>
- */
 public final class Localidade {
 
     private final int id;
@@ -14,9 +7,6 @@ public final class Localidade {
     private TipoLocalidade tipo;
     private int populacao;
 
-    /**
-     * @throws IllegalArgumentException se algum dado for inválido
-     */
     public Localidade(int id, String nome, TipoLocalidade tipo, int populacao) {
         if (id <= 0) {
             throw new IllegalArgumentException("O ID deve ser um número positivo.");
@@ -64,7 +54,6 @@ public final class Localidade {
         this.populacao = populacao;
     }
 
-    /** Duas localidades são a mesma se tiverem o mesmo ID. */
     @Override
     public boolean equals(Object outro) {
         return outro instanceof Localidade l && l.id == this.id;
@@ -75,7 +64,6 @@ public final class Localidade {
         return Integer.hashCode(id);
     }
 
-    /** Exemplo: {@code 50 - Luziânia (Cidade, pop. 210000)} */
     @Override
     public String toString() {
         return id + " - " + nome + " (" + tipo + ", pop. " + populacao + ")";

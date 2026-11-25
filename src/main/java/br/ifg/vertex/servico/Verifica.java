@@ -24,7 +24,6 @@ public final class Verifica {
         }
     }
 
-    /** Confere que o trecho lança exatamente o tipo de exceção esperado. */
     public static void lanca(Class<? extends Throwable> tipo, Runnable trecho, String mensagem) {
         try {
             trecho.run();
@@ -38,7 +37,6 @@ public final class Verifica {
         throw new AssertionError(mensagem + " (não lançou nada; esperava " + tipo.getSimpleName() + ")");
     }
 
-    /** Confere as regras de integração (slide 19) no sistema dado. */
     public static void consistente(SistemaCidades sistema) {
         var problemas = sistema.verificarConsistencia();
         if (!problemas.isEmpty()) {

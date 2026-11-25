@@ -19,11 +19,6 @@ class DijkstraTest {
         return grafo;
     }
 
-    /**
-     * 1->4 direto: 100 km, 100 min (1 aresta).
-     * 1->2->3->4: 10+10+10 = 30 km mas 60+60+60 = 180 min (3 arestas, estrada ruim).
-     * 1->5->4: 40+40 = 80 km, 20+20 = 40 min (2 arestas, rodovia).
-     */
     private static Grafo tresCaminhos() {
         Grafo grafo = grafoCom(5);
         grafo.adicionarAresta(new Aresta(1, 4, 100, 100));
@@ -66,7 +61,7 @@ class DijkstraTest {
     @Test
     void destinoInalcancavelDevolveResultadoSemCaminho() {
         Grafo grafo = grafoCom(3);
-        grafo.adicionarAresta(new Aresta(1, 2, 5, 5)); // 3 está isolado
+        grafo.adicionarAresta(new Aresta(1, 2, 5, 5));
 
         ResultadoCaminho r = Dijkstra.menorCaminho(grafo, 1, 3, CriterioPeso.DISTANCIA);
 
@@ -78,7 +73,7 @@ class DijkstraTest {
     @Test
     void respeitaOSentidoDasArestas() {
         Grafo grafo = grafoCom(2);
-        grafo.adicionarAresta(new Aresta(1, 2, 5, 5)); // só ida
+        grafo.adicionarAresta(new Aresta(1, 2, 5, 5));
 
         assertTrue(Dijkstra.menorCaminho(grafo, 1, 2, CriterioPeso.TEMPO).existe());
         assertFalse(Dijkstra.menorCaminho(grafo, 2, 1, CriterioPeso.TEMPO).existe());
@@ -97,7 +92,6 @@ class DijkstraTest {
 
     @Test
     void vaiPorCaminhoMaisLongoEmArestasQuandoECompensa() {
-        // 1->3 direto custa 10; 1->2->3 custa 1+1
         Grafo grafo = grafoCom(3);
         grafo.adicionarAresta(new Aresta(1, 3, 10, 10));
         grafo.adicionarAresta(new Aresta(1, 2, 1, 1));
@@ -120,7 +114,6 @@ class DijkstraTest {
 
     @Test
     void empateEmCustoDaSempreOMesmoCaminho() {
-        // dois caminhos de custo 2: via 2 e via 3 (vence o encontrado primeiro, o do menor ID)
         Grafo grafo = grafoCom(4);
         grafo.adicionarAresta(new Aresta(1, 2, 1, 1));
         grafo.adicionarAresta(new Aresta(1, 3, 1, 1));
@@ -163,7 +156,7 @@ class DijkstraTest {
     void menosArestasDaBfsIgnoraKmEMinutos() {
         ResultadoCaminho r = BuscasGrafo.menosArestas(tresCaminhos(), 1, 4);
 
-        assertEquals(List.of(1, 4), r.caminho()); // 1 aresta, mesmo sendo a mais longa e lenta
+        assertEquals(List.of(1, 4), r.caminho());
         assertEquals(100.0, r.distanciaKm(), 1e-9);
         assertEquals(100, r.tempoMin());
     }

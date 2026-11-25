@@ -15,11 +15,6 @@ import java.util.List;
 import java.util.Random;
 import org.junit.jupiter.api.Test;
 
-/**
- * "Caça a entradas inválidas": um usuário que digita bobagens aleatórias (letras, vazio, números
- * gigantes, IDs que existem e que não existem) não pode derrubar o programa nem deixar os
- * dados inconsistentes. Se algo inesperado acontecesse, o menu mostraria "erro inesperado".
- */
 class MenuPrincipalFuzzTest {
 
     private static final String[] BOBAGENS = {
@@ -32,13 +27,13 @@ class MenuPrincipalFuzzTest {
     private static String linhaAleatoria(Random sorteio) {
         int tipo = sorteio.nextInt(100);
         if (tipo < 30) {
-            return String.valueOf(sorteio.nextInt(17)); // opções de menu e de submenu
+            return String.valueOf(sorteio.nextInt(17));
         }
         if (tipo < 65) {
             return String.valueOf(IDS[sorteio.nextInt(IDS.length)]);
         }
         if (tipo < 70) {
-            return "N".repeat(1 + sorteio.nextInt(300)); // nome enorme
+            return "N".repeat(1 + sorteio.nextInt(300));
         }
         if (tipo < 75) {
             return String.valueOf(sorteio.nextInt(500)) + "," + sorteio.nextInt(100); // decimal
@@ -53,11 +48,10 @@ class MenuPrincipalFuzzTest {
         try {
             String texto = String.join("\n", linhas) + "\n";
             Entrada entrada = new Entrada(new ByteArrayInputStream(texto.getBytes(StandardCharsets.UTF_8)));
-            while (true) { // se o "usuário" sair por acaso, abre o menu de novo até as linhas acabarem
+            while (true) {
                 new MenuPrincipal(entrada, sistema).executar();
             }
         } catch (EntradaEncerradaException e) {
-            // esperado: as linhas acabaram no meio de alguma pergunta
         } finally {
             System.setOut(original);
         }

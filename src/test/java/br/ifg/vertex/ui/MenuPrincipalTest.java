@@ -15,10 +15,6 @@ import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import org.junit.jupiter.api.Test;
 
-/**
- * Testes de ponta a ponta do menu: um "teclado" simulado digita as linhas e o teste
- * confere o estado do sistema e o que apareceu na tela.
- */
 class MenuPrincipalTest {
 
     private static SistemaCidades sistemaDeTeste() {
@@ -27,7 +23,6 @@ class MenuPrincipalTest {
         return sistema;
     }
 
-    /** Roda o menu digitando as linhas dadas e devolve tudo o que foi escrito na tela. */
     private static String rodar(SistemaCidades sistema, String... linhas) {
         PrintStream original = System.out;
         ByteArrayOutputStream capturado = new ByteArrayOutputStream();
@@ -64,7 +59,6 @@ class MenuPrincipalTest {
     void entradasInvalidasPedemDeNovoENuncaDerrubamOPrograma() {
         SistemaCidades sistema = sistemaDeTeste();
 
-        // opção "abc" e "99" inválidas; id "-5" e "xyz" inválidos; tipo "9" e população "-1" inválidos
         String tela = rodar(sistema, "abc", "99", "1", "-5", "xyz", "101", "Bairro Novo", "9", "2", "-1", "300",
                 "0", "s");
 

@@ -122,14 +122,12 @@ class ConectividadeTest {
 
     @Test
     void cicloQuePassaPorViaDeMaoDuplaNaoEscapaMesmoDependendoDaOrdemDosIds() {
-        // 1=3 (mão dupla), 1->2, 2->3: o ciclo 1 -> 2 -> 3 -> 1 existe
         Grafo grafo = grafoCom(3);
         via(grafo, 1, 3);
         unica(grafo, 1, 2);
         unica(grafo, 2, 3);
         assertEquals(List.of(List.of(1, 2, 3)), Conectividade.ciclos(grafo));
 
-        // o mesmo desenho com os IDs trocados (3 como início) também precisa achar
         Grafo outro = grafoCom(3);
         via(outro, 3, 1);
         unica(outro, 3, 2);
@@ -156,7 +154,7 @@ class ConectividadeTest {
         for (int id = 1; id < 20_000; id++) {
             unica(grafo, id, id + 1);
         }
-        unica(grafo, 20_000, 1); // fecha um ciclo gigante
+        unica(grafo, 20_000, 1);
         assertEquals(1, Conectividade.ciclos(grafo).size());
     }
 
@@ -192,12 +190,12 @@ class ConectividadeTest {
         Random sorteio = new Random(2026);
         int comCiclo = 0;
         for (int tentativa = 0; tentativa < 500; tentativa++) {
-            int n = 3 + sorteio.nextInt(4); // 3 a 6 vértices
+            int n = 3 + sorteio.nextInt(4);
             Grafo grafo = grafoCom(n);
             for (int a = 1; a <= n; a++) {
                 for (int b = 1; b <= n; b++) {
                     if (a != b && sorteio.nextDouble() < 0.3) {
-                        unica(grafo, a, b); // pares de mão dupla surgem por acaso
+                        unica(grafo, a, b);
                     }
                 }
             }
@@ -218,6 +216,6 @@ class ConectividadeTest {
                 comCiclo++;
             }
         }
-        assertTrue(comCiclo > 50 && comCiclo < 500); // o sorteio exercitou os dois casos
+        assertTrue(comCiclo > 50 && comCiclo < 500);
     }
 }

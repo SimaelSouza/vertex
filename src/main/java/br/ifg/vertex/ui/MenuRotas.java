@@ -14,7 +14,6 @@ class MenuRotas extends MenuBase {
         super(entrada, sistema);
     }
 
-    /** Opção 11: submenu com os dois critérios do Dijkstra. */
     void menorRota() {
         executarSubmenu("Calcular menor rota", List.of(
                 "Menor rota por distância (km)",
@@ -32,7 +31,6 @@ class MenuRotas extends MenuBase {
         });
     }
 
-    /** Opção 13: BFS x menor km x menor tempo para o mesmo par. */
     void comparar() {
         Console.subtitulo("Comparar rotas");
         int origem = lerIdExistente("ID da localidade de origem: ");

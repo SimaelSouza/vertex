@@ -10,7 +10,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import br.ifg.vertex.modelo.Localidade;
 import org.junit.jupiter.api.Test;
 
-/** Testes do vetor por níveis (índice 1) e do estudo comparativo de armazenamento. */
 class ArvoreBinariaBuscaVetorTest {
 
     private static int idEm(Localidade[] vetor, int indice) {

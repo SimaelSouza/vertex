@@ -9,23 +9,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.Queue;
 
-/**
- * Buscas em grafo implementadas à mão: em largura (BFS) e em profundidade (DFS).
- *
- * <p>As duas respeitam o sentido das arestas e visitam os vizinhos em ordem crescente de
- * ID (é a ordem das listas de adjacência), então o resultado é sempre o mesmo para o
- * mesmo grafo. Cada busca visita cada vértice e cada aresta no máximo uma vez: O(V + E).</p>
- */
 public final class BuscasGrafo {
 
     private BuscasGrafo() {
     }
 
-    /**
-     * BFS: visita primeiro todos os vizinhos, depois os vizinhos dos vizinhos (usa uma fila).
-     * A profundidade de cada vértice é o MENOR número de arestas desde a origem, então o
-     * caminho encontrado é o que tem menos paradas.
-     */
     public static ResultadoBusca emLargura(Grafo grafo, int origem) {
         exigirOrigem(grafo, origem);
         List<Integer> ordem = new ArrayList<>();
@@ -49,12 +37,6 @@ public final class BuscasGrafo {
         return montar(grafo, origem, ordem, pai, profundidade);
     }
 
-    /**
-     * DFS: vai o mais fundo possível por um caminho e só volta quando não há mais saída
-     * (usa uma pilha). É feita sem recursão para não estourar a pilha de chamadas em
-     * grafos grandes, mas visita na mesma ordem da versão recursiva. O caminho encontrado
-     * NÃO é necessariamente o mais curto.
-     */
     public static ResultadoBusca emProfundidade(Grafo grafo, int origem) {
         exigirOrigem(grafo, origem);
         List<Integer> ordem = new ArrayList<>();
@@ -82,10 +64,6 @@ public final class BuscasGrafo {
         return montar(grafo, origem, ordem, pai, profundidade);
     }
 
-    /**
-     * Caminho com MENOS ARESTAS entre duas localidades (é o que a BFS garante). Ele ignora
-     * km e minutos: por isso pode ser mais longo ou mais lento que o do Dijkstra.
-     */
     public static ResultadoCaminho menosArestas(Grafo grafo, int origem, int destino) {
         exigirOrigem(grafo, origem);
         exigirOrigem(grafo, destino);

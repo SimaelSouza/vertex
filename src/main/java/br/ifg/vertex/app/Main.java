@@ -7,13 +7,9 @@ import br.ifg.vertex.ui.Entrada;
 import br.ifg.vertex.ui.EntradaEncerradaException;
 import br.ifg.vertex.ui.MenuPrincipal;
 
-/**
- * Ponto de entrada do VERTEX.
- *
- * <p>Dica de execução no IntelliJ (para os acentos saírem certos): em
- * Run &gt; Edit Configurations &gt; VM options, use
- * {@code -Dfile.encoding=UTF-8 -Dstdout.encoding=UTF-8}.</p>
- */
+
+ // -Dfile.encoding=UTF-8 -Dstdout.encoding=UTF-8
+
 public class Main {
 
     public static void main(String[] args) {

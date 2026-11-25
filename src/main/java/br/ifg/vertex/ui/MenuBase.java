@@ -5,9 +5,6 @@ import br.ifg.vertex.servico.SistemaCidades;
 import java.util.List;
 import java.util.function.IntConsumer;
 
-/**
- * Base dos menus: guarda a entrada e o sistema e sabe rodar um submenu numerado.
- */
 abstract class MenuBase {
 
     protected final Entrada entrada;
@@ -18,13 +15,6 @@ abstract class MenuBase {
         this.sistema = sistema;
     }
 
-    /**
-     * Mostra o submenu e executa a ação escolhida até o usuário voltar (opção 0).
-     * Se a ação violar uma regra de negócio, mostra o erro e continua no submenu.
-     *
-     * @param opcoes os textos das opções 1, 2, 3... (a opção 0, "Voltar", é automática)
-     * @param acao   recebe o número da opção escolhida
-     */
     protected void executarSubmenu(String titulo, List<String> opcoes, IntConsumer acao) {
         while (true) {
             Console.subtitulo(titulo);
@@ -44,12 +34,10 @@ abstract class MenuBase {
         }
     }
 
-    /** Lê um ID positivo (não confere se existe). */
     protected int lerId(String pergunta) {
         return entrada.lerInteiro(pergunta, 1, Integer.MAX_VALUE);
     }
 
-    /** Lê um ID e já confere na árvore se a localidade existe (se não, lança erro de regra). */
     protected int lerIdExistente(String pergunta) {
         int id = lerId(pergunta);
         sistema.exigirLocalidade(id);

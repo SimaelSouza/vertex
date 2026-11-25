@@ -11,10 +11,6 @@ import org.junit.jupiter.api.Test;
 
 class BuscasGrafoTest {
 
-    /**
-     * Grafo dirigido de teste:  1->2, 2->3, 3->4, 1->4, 6->1; o vértice 5 está isolado.
-     * Da origem 1 há dois caminhos até o 4: o curto (1,4) e o longo (1,2,3,4).
-     */
     private static Grafo grafoDeTeste() {
         Grafo grafo = new Grafo();
         for (int id = 1; id <= 6; id++) {
@@ -40,7 +36,7 @@ class BuscasGrafoTest {
         assertEquals(1, r.profundidade().get(4).intValue());
         assertEquals(2, r.profundidade().get(3).intValue());
         assertEquals(2, r.pai().get(3).intValue());
-        assertFalse(r.pai().containsKey(1)); // a origem não tem pai
+        assertFalse(r.pai().containsKey(1));
     }
 
     @Test
@@ -56,11 +52,11 @@ class BuscasGrafoTest {
         Grafo grafo = grafoDeTeste();
 
         ResultadoBusca de1 = BuscasGrafo.emLargura(grafo, 1);
-        assertEquals(List.of(5, 6), de1.naoAlcancados()); // 6 aponta para 1, mas 1 não chega no 6
+        assertEquals(List.of(5, 6), de1.naoAlcancados());
         assertFalse(de1.alcancou(6));
         assertEquals(List.of(), de1.caminhoAte(6));
 
-        ResultadoBusca de4 = BuscasGrafo.emLargura(grafo, 4); // o 4 não tem saída
+        ResultadoBusca de4 = BuscasGrafo.emLargura(grafo, 4);
         assertEquals(List.of(4), de4.ordemVisita());
         assertEquals(5, de4.naoAlcancados().size());
     }
@@ -93,12 +89,11 @@ class BuscasGrafoTest {
     @Test
     void profundidadeNaoGaranteOCaminhoMaisCurto() {
         ResultadoBusca r = BuscasGrafo.emProfundidade(grafoDeTeste(), 1);
-        assertEquals(List.of(1, 2, 3, 4), r.caminhoAte(4)); // existe (1,4), mas a DFS achou o longo
+        assertEquals(List.of(1, 2, 3, 4), r.caminhoAte(4));
     }
 
     @Test
     void profundidadeVoltaParaExplorarOutrosRamos() {
-        // 1->2, 1->3, 2->4: ao chegar no 4 volta ao 1 para visitar o 3
         Grafo grafo = new Grafo();
         for (int id = 1; id <= 4; id++) {
             grafo.adicionarVertice(id);
@@ -117,7 +112,7 @@ class BuscasGrafoTest {
     @Test
     void profundidadeNaoTravaEmCadeiaMuitoLonga() {
         Grafo grafo = new Grafo();
-        int n = 20_000; // uma versão recursiva estouraria a pilha de chamadas
+        int n = 20_000;
         for (int id = 1; id <= n; id++) {
             grafo.adicionarVertice(id);
         }
